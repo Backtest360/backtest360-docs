@@ -1,6 +1,6 @@
 # Backtest360
 
-**Backtest your trading strategy from every angle, in minutes.**
+**Backtest your trading strategy in minutes. Institutional grade.**
 
 Backtest360 provides a cloud-based backtesting engine with a clean Python SDK and REST API. Plug in your OHLCV data, define a strategy with plain boolean expressions, and get a full performance report in seconds.
 
