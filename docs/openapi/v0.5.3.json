@@ -1,0 +1,1990 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Backtester API",
+    "version": "0.5.3"
+  },
+  "paths": {
+    "/version": {
+      "get": {
+        "summary": "Get Version",
+        "description": "Return engine and client compatibility version info.",
+        "operationId": "get_version_version_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/indicators": {
+      "get": {
+        "summary": "Get Indicators",
+        "description": "Return indicator registry with parameter schemas + strategy-logic\nmetadata. Response is filtered by the caller's scopes: admin-scoped\nkeys see every registered indicator; non-admin keys see only\n`tier=\"public\"` items (see docs/AUTH_SPEC.md \u00a74.1).\n\nExtended in Phase F.1 (STRATEGY_LOGIC_BACKEND_SPEC.md \u00a76.1) to expose\n`kind`, `arity`, `value_dtype`, `output_columns`, `tags`, plus a\ntop-level `version` SHA-256 over registry contents for client cache\ninvalidation.",
+        "operationId": "get_indicators_api_indicators_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/schemas/strategy": {
+      "get": {
+        "summary": "Get Strategy Schema",
+        "description": "Return the JSON Schema (Draft 2020-12) for the Strategy document.\n\nFrontends consume this for client-side validation, form generation,\nand IDE tooling. Schema is a static module-level constant \u2014 see\nsrc/backtest360_engine/api/strategy_schema.py.",
+        "operationId": "get_strategy_schema_api_schemas_strategy_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/validate-strategy": {
+      "post": {
+        "summary": "Post Validate Strategy",
+        "description": "Validate a Strategy document without running a backtest.\n\nBody shape (per STRATEGY_LOGIC_BACKEND_SPEC.md \u00a76.3):\n    {\n      \"strategy\": <Strategy doc per \u00a75>,\n      \"scope\": {\"leaf_paths\": [...]}      # optional fast path\n    }\n\nReturns 200 with {valid: true, warmup_bars, referenced_indicators,\nreferenced_columns_per_slot, warnings: []} on success, or 422 with\n{valid: false, errors: [...]} on failure. Errors carry a structured\n`code` + JSON-Pointer `location` per Phase C / backend spec \u00a77.",
+        "operationId": "post_validate_strategy_api_validate_strategy_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/operators": {
+      "get": {
+        "summary": "Get Operators",
+        "description": "Return condition operators for the Strategy Creator.",
+        "operationId": "get_operators_api_operators_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/strategies": {
+      "get": {
+        "summary": "Get Strategies",
+        "description": "Return the strategies available to the caller.\n\nResponse shape:\n  {\n    \"strategies\": [\n      {\"id\": ..., \"origin\": \"system\" | \"user\", \"name\": ..., ...},\n      ...\n    ]\n  }\n\n`origin='system'` items come from auto-discovery of\n`src/backtest360_engine/strategies/templates/`. `origin='user'` items would be\nloaded from the platform's per-user store given a `user_id` \u2014 not yet\nwired here; returns only system templates for now.\n\nFiltered by caller scopes per docs/AUTH_SPEC.md \u00a74.1 \u2014 admin-scoped\nkeys see every strategy; non-admin keys see only `tier=\"public\"`\nstrategies.",
+        "operationId": "get_strategies_api_strategies_get",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "User Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/execution-modes": {
+      "get": {
+        "summary": "Get Execution Modes",
+        "description": "Return valid execution anchors and fill algorithms.\n\nArgs:\n    is_24h: Whether the market trades 24h (e.g., crypto). Default True.\n    anchor: If provided, return valid fill algorithms for this anchor only.",
+        "operationId": "get_execution_modes_api_execution_modes_get",
+        "parameters": [
+          {
+            "name": "is_24h",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "boolean",
+              "default": true,
+              "title": "Is 24H"
+            }
+          },
+          {
+            "name": "anchor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Anchor"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sections": {
+      "get": {
+        "summary": "Get Sections",
+        "description": "Return section -> field mappings for performance stats.",
+        "operationId": "get_sections_api_sections_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sampling-modes": {
+      "get": {
+        "summary": "Get Sampling Modes",
+        "description": "Return MC sampling modes with descriptions and per-mode parameters.",
+        "operationId": "get_sampling_modes_api_sampling_modes_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stop-types": {
+      "get": {
+        "summary": "Get Stop Types",
+        "description": "Return stop loss types with per-type parameters.",
+        "operationId": "get_stop_types_api_stop_types_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sizing-methods": {
+      "get": {
+        "summary": "Get Sizing Methods",
+        "description": "Return position sizing methods with parameters.",
+        "operationId": "get_sizing_methods_api_sizing_methods_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bar-frequencies": {
+      "get": {
+        "summary": "Get Bar Frequencies",
+        "description": "Return the full server-wide bar frequency capability set plus the\nhard signal-x-execution compatibility matrix the GUI MUST enforce.\n\nThe matrix encodes the engine's 18 supported (signal_frequency,\nexecution_bar_frequency) combinations. The GUI filters its execution\ndropdown based on the selected signal using the ``valid_execution_bars``\nmap. It also toggles the ``open_hour``/``close_hour`` controls based on\n``open_close_hour_applies_when`` \u2014 those fields are only meaningful in\nexactly one scenario: daily signal + hourly execution.",
+        "operationId": "get_bar_frequencies_api_bar_frequencies_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data/upload": {
+      "post": {
+        "summary": "Upload Data",
+        "description": "Receive a file, call parse_backtest_file(), return ParseResult as JSON.",
+        "operationId": "upload_data_api_data_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_data_api_data_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data/tickers": {
+      "get": {
+        "summary": "List Tickers Endpoint",
+        "description": "List all available tickers, optionally filtered by asset class.",
+        "operationId": "list_tickers_endpoint_api_data_tickers_get",
+        "parameters": [
+          {
+            "name": "asset_class",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Asset Class"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data/lookup/{ticker}": {
+      "get": {
+        "summary": "Lookup Asset Endpoint",
+        "description": "Look up a single asset by ticker.",
+        "operationId": "lookup_asset_endpoint_api_data_lookup__ticker__get",
+        "parameters": [
+          {
+            "name": "ticker",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Ticker"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data/search": {
+      "get": {
+        "summary": "Search Assets",
+        "description": "Search for assets by name or ticker via provider.",
+        "operationId": "search_assets_api_data_search_get",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Q"
+            }
+          },
+          {
+            "name": "asset_class",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Asset Class"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data/range": {
+      "get": {
+        "summary": "Get Data Range",
+        "description": "Get available date range and market hours for a symbol.",
+        "operationId": "get_data_range_api_data_range_get",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Symbol"
+            }
+          },
+          {
+            "name": "frequency",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Frequency"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/data/preview": {
+      "post": {
+        "summary": "Preview Data",
+        "description": "Fetch OHLCV data via configured provider + cache, return summary + price series.",
+        "operationId": "preview_data_api_data_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DataPreviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/backtest": {
+      "post": {
+        "summary": "Run Backtest Endpoint",
+        "description": "Run backtest via new pipeline, return full result as JSON.",
+        "operationId": "run_backtest_endpoint_api_backtest_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/latest-signal": {
+      "post": {
+        "summary": "Latest Signal Endpoint",
+        "description": "Return the strategy's latest signal for the most recent bar of OHLCV.\n\nSame request shape as /api/backtest. The engine slices market_data to\nthe warmup tail (per Strategy.required_warmup_bars), runs signal\ngeneration only, returns the last bar's signal int plus the latest\nindicator panels (no P&L, no statistics, no equity curve).\n\nUsed for live trading and \"what would the strategy say right now?\"\nGUI buttons.",
+        "operationId": "latest_signal_endpoint_api_latest_signal_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/backtest/test": {
+      "post": {
+        "summary": "Test Backtest",
+        "description": "Same request shape as /api/backtest \u2014 returns dummy results instantly.",
+        "operationId": "test_backtest_api_backtest_test_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/backtest/compare": {
+      "post": {
+        "summary": "Compare Backtests",
+        "description": "Run multiple strategies against same data, return side-by-side comparison.",
+        "operationId": "compare_backtests_api_backtest_compare_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompareRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/stats": {
+      "post": {
+        "summary": "Compute Stats",
+        "description": "Compute 120+ performance metrics from a return series.",
+        "operationId": "compute_stats_api_stats_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/monte-carlo": {
+      "post": {
+        "summary": "Run Monte Carlo",
+        "description": "Run Monte Carlo simulation synchronously. Returns full result.",
+        "operationId": "run_monte_carlo_api_monte_carlo_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MonteCarloRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/monte-carlo/rank": {
+      "post": {
+        "summary": "Monte Carlo Rank",
+        "description": "Compute historical result's percentile rank within MC distribution.\n\nStateless: caller provides both the MC result and historical stats inline.",
+        "operationId": "monte_carlo_rank_api_monte_carlo_rank_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MCRankRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BacktestRequest": {
+        "properties": {
+          "data_source": {
+            "$ref": "#/components/schemas/DataSourceRef"
+          },
+          "strategy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StrategyInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "signals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SignalsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "execution": {
+            "$ref": "#/components/schemas/ExecutionConfig",
+            "default": {
+              "entry_anchor": "open",
+              "entry_window": 0,
+              "entry_fill": "exact",
+              "exit_anchor": "close",
+              "exit_window": 0,
+              "exit_fill": "exact",
+              "slippage_bps": 0.0,
+              "fee_pct": 0.0,
+              "vol_scaled_slippage": false,
+              "vol_slippage_lookback": 20,
+              "stop_atr_period": 14,
+              "stop_reentry": "immediate",
+              "stop_cooldown_bars": 0,
+              "position_weight": 1.0,
+              "vol_target_lookback": 20,
+              "signal_frequency": "daily",
+              "risk_free_rate": 0.0,
+              "random_seed": 42,
+              "on_bad_data": "raise",
+              "strict_anchors": false
+            }
+          },
+          "benchmark": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DataSourceRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "data_source"
+        ],
+        "title": "BacktestRequest"
+      },
+      "Body_upload_data_api_data_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_data_api_data_upload_post"
+      },
+      "CompareRequest": {
+        "properties": {
+          "data_source": {
+            "$ref": "#/components/schemas/DataSourceRef"
+          },
+          "strategies": {
+            "items": {
+              "$ref": "#/components/schemas/SingleStrategyConfig"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Strategies"
+          },
+          "include_benchmark": {
+            "type": "boolean",
+            "title": "Include Benchmark",
+            "default": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "data_source",
+          "strategies"
+        ],
+        "title": "CompareRequest"
+      },
+      "DataPreviewRequest": {
+        "properties": {
+          "symbol": {
+            "type": "string",
+            "title": "Symbol"
+          },
+          "start": {
+            "type": "string",
+            "title": "Start"
+          },
+          "end": {
+            "type": "string",
+            "title": "End"
+          },
+          "frequency": {
+            "type": "string",
+            "title": "Frequency",
+            "default": "daily"
+          },
+          "config": {
+            "type": "string",
+            "title": "Config",
+            "default": "adjusted"
+          }
+        },
+        "type": "object",
+        "required": [
+          "symbol",
+          "start",
+          "end"
+        ],
+        "title": "DataPreviewRequest"
+      },
+      "DataSourceRef": {
+        "properties": {
+          "ohlcv": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OHLCVInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symbol"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "config": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          }
+        },
+        "type": "object",
+        "title": "DataSourceRef"
+      },
+      "EngineConfig": {
+        "properties": {
+          "entry_anchor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Anchor"
+          },
+          "entry_window": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Window"
+          },
+          "entry_fill": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Entry Fill"
+          },
+          "exit_anchor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Anchor"
+          },
+          "exit_window": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Window"
+          },
+          "exit_fill": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Fill"
+          },
+          "slippage_bps": {
+            "type": "number",
+            "title": "Slippage Bps",
+            "default": 0.0
+          },
+          "fee_pct": {
+            "type": "number",
+            "title": "Fee Pct",
+            "default": 0.0
+          },
+          "stop_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Type"
+          },
+          "stop_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Value"
+          },
+          "stop_atr_period": {
+            "type": "integer",
+            "title": "Stop Atr Period",
+            "default": 14
+          },
+          "stop_reentry": {
+            "type": "string",
+            "title": "Stop Reentry",
+            "default": "immediate"
+          },
+          "stop_cooldown_bars": {
+            "type": "integer",
+            "title": "Stop Cooldown Bars",
+            "default": 0
+          },
+          "max_drawdown_limit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Drawdown Limit"
+          },
+          "position_weight": {
+            "type": "number",
+            "title": "Position Weight",
+            "default": 1.0
+          },
+          "vol_target": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vol Target"
+          },
+          "vol_target_lookback": {
+            "type": "integer",
+            "title": "Vol Target Lookback",
+            "default": 20
+          },
+          "leverage_limit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leverage Limit"
+          },
+          "daily_bar_open_hour": {
+            "type": "number",
+            "title": "Daily Bar Open Hour",
+            "default": 0.0
+          },
+          "daily_bar_close_hour": {
+            "type": "number",
+            "title": "Daily Bar Close Hour",
+            "default": 0.0
+          },
+          "risk_free_rate": {
+            "type": "number",
+            "title": "Risk Free Rate",
+            "default": 0.0
+          }
+        },
+        "type": "object",
+        "title": "EngineConfig",
+        "description": "Legacy \u2014 kept for Monte Carlo endpoint (deferred)."
+      },
+      "ExecutionConfig": {
+        "properties": {
+          "entry_anchor": {
+            "type": "string",
+            "title": "Entry Anchor",
+            "default": "open"
+          },
+          "entry_window": {
+            "type": "integer",
+            "title": "Entry Window",
+            "default": 0
+          },
+          "entry_fill": {
+            "type": "string",
+            "title": "Entry Fill",
+            "default": "exact"
+          },
+          "exit_anchor": {
+            "type": "string",
+            "title": "Exit Anchor",
+            "default": "close"
+          },
+          "exit_window": {
+            "type": "integer",
+            "title": "Exit Window",
+            "default": 0
+          },
+          "exit_fill": {
+            "type": "string",
+            "title": "Exit Fill",
+            "default": "exact"
+          },
+          "slippage_bps": {
+            "type": "number",
+            "exclusiveMaximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Slippage Bps",
+            "default": 0.0
+          },
+          "fee_pct": {
+            "type": "number",
+            "exclusiveMaximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fee Pct",
+            "default": 0.0
+          },
+          "vol_scaled_slippage": {
+            "type": "boolean",
+            "title": "Vol Scaled Slippage",
+            "default": false
+          },
+          "vol_slippage_lookback": {
+            "type": "integer",
+            "minimum": 2.0,
+            "title": "Vol Slippage Lookback",
+            "default": 20
+          },
+          "stop_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Type"
+          },
+          "stop_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Value"
+          },
+          "stop_atr_period": {
+            "type": "integer",
+            "title": "Stop Atr Period",
+            "default": 14
+          },
+          "stop_reentry": {
+            "type": "string",
+            "title": "Stop Reentry",
+            "default": "immediate"
+          },
+          "stop_cooldown_bars": {
+            "type": "integer",
+            "title": "Stop Cooldown Bars",
+            "default": 0
+          },
+          "max_drawdown_limit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Drawdown Limit"
+          },
+          "position_weight": {
+            "type": "number",
+            "title": "Position Weight",
+            "default": 1.0
+          },
+          "vol_target": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vol Target"
+          },
+          "vol_target_lookback": {
+            "type": "integer",
+            "minimum": 2.0,
+            "title": "Vol Target Lookback",
+            "default": 20
+          },
+          "leverage_limit": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leverage Limit"
+          },
+          "open_hour": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Hour"
+          },
+          "close_hour": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close Hour"
+          },
+          "signal_frequency": {
+            "type": "string",
+            "title": "Signal Frequency",
+            "default": "daily"
+          },
+          "risk_free_rate": {
+            "type": "number",
+            "title": "Risk Free Rate",
+            "default": 0.0
+          },
+          "random_seed": {
+            "type": "integer",
+            "title": "Random Seed",
+            "default": 42
+          },
+          "on_bad_data": {
+            "type": "string",
+            "enum": [
+              "raise",
+              "zero"
+            ],
+            "title": "On Bad Data",
+            "default": "raise"
+          },
+          "strict_anchors": {
+            "type": "boolean",
+            "title": "Strict Anchors",
+            "default": false
+          }
+        },
+        "type": "object",
+        "title": "ExecutionConfig",
+        "description": "Execution, costs, risk, sizing, timing \u2014 all in one."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "MCRankRequest": {
+        "properties": {
+          "mc_result": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Mc Result"
+          },
+          "historical_stats": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Historical Stats"
+          }
+        },
+        "type": "object",
+        "required": [
+          "mc_result",
+          "historical_stats"
+        ],
+        "title": "MCRankRequest"
+      },
+      "ModelConfig": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Parameters",
+            "default": {}
+          }
+        },
+        "type": "object",
+        "required": [
+          "id"
+        ],
+        "title": "ModelConfig"
+      },
+      "MonteCarloConfig": {
+        "properties": {
+          "n_simulations": {
+            "type": "integer",
+            "maximum": 10000.0,
+            "minimum": 1.0,
+            "title": "N Simulations",
+            "default": 500
+          },
+          "seed": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seed"
+          },
+          "path_length": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Path Length"
+          },
+          "n_cores": {
+            "type": "integer",
+            "maximum": 8.0,
+            "minimum": 1.0,
+            "title": "N Cores",
+            "default": 4
+          },
+          "sampling": {
+            "$ref": "#/components/schemas/MonteCarloSampling",
+            "default": {
+              "mode": "iid_bootstrap",
+              "demean": false
+            }
+          }
+        },
+        "type": "object",
+        "title": "MonteCarloConfig"
+      },
+      "MonteCarloRequest": {
+        "properties": {
+          "data_source": {
+            "$ref": "#/components/schemas/DataSourceRef"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ModelConfig"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "signals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SignalsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "engine": {
+            "$ref": "#/components/schemas/EngineConfig",
+            "default": {
+              "slippage_bps": 0.0,
+              "fee_pct": 0.0,
+              "stop_atr_period": 14,
+              "stop_reentry": "immediate",
+              "stop_cooldown_bars": 0,
+              "position_weight": 1.0,
+              "vol_target_lookback": 20,
+              "daily_bar_open_hour": 0.0,
+              "daily_bar_close_hour": 0.0,
+              "risk_free_rate": 0.0
+            }
+          },
+          "monte_carlo": {
+            "$ref": "#/components/schemas/MonteCarloConfig",
+            "default": {
+              "n_simulations": 500,
+              "n_cores": 4,
+              "sampling": {
+                "demean": false,
+                "mode": "iid_bootstrap"
+              }
+            }
+          }
+        },
+        "type": "object",
+        "required": [
+          "data_source"
+        ],
+        "title": "MonteCarloRequest"
+      },
+      "MonteCarloSampling": {
+        "properties": {
+          "mode": {
+            "type": "string",
+            "title": "Mode",
+            "default": "iid_bootstrap"
+          },
+          "demean": {
+            "type": "boolean",
+            "title": "Demean",
+            "default": false
+          },
+          "block_length": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Block Length"
+          },
+          "half_life_blocks": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Half Life Blocks"
+          }
+        },
+        "type": "object",
+        "title": "MonteCarloSampling"
+      },
+      "OHLCVInput": {
+        "properties": {
+          "dates": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Dates"
+          },
+          "open": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Open"
+          },
+          "high": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "High"
+          },
+          "low": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Low"
+          },
+          "close": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Close"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dates",
+          "open",
+          "high",
+          "low",
+          "close"
+        ],
+        "title": "OHLCVInput",
+        "description": "Inline OHLCV data as parallel arrays."
+      },
+      "SignalsInput": {
+        "properties": {
+          "strategy_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Strategy Name",
+            "default": "Custom"
+          },
+          "dates": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Dates",
+            "default": []
+          },
+          "values": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Values",
+            "default": []
+          }
+        },
+        "type": "object",
+        "title": "SignalsInput",
+        "description": "Pre-computed signals as parallel arrays."
+      },
+      "SingleStrategyConfig": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "strategy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StrategyInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "signals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SignalsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "execution": {
+            "$ref": "#/components/schemas/ExecutionConfig",
+            "default": {
+              "entry_anchor": "open",
+              "entry_window": 0,
+              "entry_fill": "exact",
+              "exit_anchor": "close",
+              "exit_window": 0,
+              "exit_fill": "exact",
+              "slippage_bps": 0.0,
+              "fee_pct": 0.0,
+              "vol_scaled_slippage": false,
+              "vol_slippage_lookback": 20,
+              "stop_atr_period": 14,
+              "stop_reentry": "immediate",
+              "stop_cooldown_bars": 0,
+              "position_weight": 1.0,
+              "vol_target_lookback": 20,
+              "signal_frequency": "daily",
+              "risk_free_rate": 0.0,
+              "random_seed": 42,
+              "on_bad_data": "raise",
+              "strict_anchors": false
+            }
+          }
+        },
+        "type": "object",
+        "required": [
+          "label"
+        ],
+        "title": "SingleStrategyConfig"
+      },
+      "StatsConfig": {
+        "properties": {
+          "risk_free_rate": {
+            "type": "number",
+            "title": "Risk Free Rate",
+            "default": 0.0
+          },
+          "trading_days_per_year": {
+            "type": "integer",
+            "title": "Trading Days Per Year"
+          }
+        },
+        "type": "object",
+        "required": [
+          "trading_days_per_year"
+        ],
+        "title": "StatsConfig"
+      },
+      "StatsRequest": {
+        "properties": {
+          "returns": {
+            "$ref": "#/components/schemas/StatsReturnsInput"
+          },
+          "benchmark_returns": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StatsReturnsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "trades": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/StatsTradeInput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trades"
+          },
+          "config": {
+            "$ref": "#/components/schemas/StatsConfig"
+          }
+        },
+        "type": "object",
+        "required": [
+          "returns",
+          "config"
+        ],
+        "title": "StatsRequest"
+      },
+      "StatsReturnsInput": {
+        "properties": {
+          "dates": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Dates"
+          },
+          "values": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "title": "Values"
+          }
+        },
+        "type": "object",
+        "required": [
+          "dates",
+          "values"
+        ],
+        "title": "StatsReturnsInput"
+      },
+      "StatsTradeInput": {
+        "properties": {
+          "entry_date": {
+            "type": "string",
+            "title": "Entry Date"
+          },
+          "exit_date": {
+            "type": "string",
+            "title": "Exit Date"
+          },
+          "direction": {
+            "type": "integer",
+            "title": "Direction"
+          },
+          "entry_price": {
+            "type": "number",
+            "title": "Entry Price"
+          },
+          "exit_price": {
+            "type": "number",
+            "title": "Exit Price"
+          },
+          "return_net": {
+            "type": "number",
+            "title": "Return Net"
+          },
+          "holding_bars": {
+            "type": "integer",
+            "title": "Holding Bars",
+            "default": 1
+          },
+          "return_gross": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Return Gross"
+          },
+          "exit_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "entry_date",
+          "exit_date",
+          "direction",
+          "entry_price",
+          "exit_price",
+          "return_net"
+        ],
+        "title": "StatsTradeInput",
+        "description": "Single trade record for /api/stats. Accepts the same shape as\nrun_result.trades produced by run_backtest."
+      },
+      "StrategyInput": {
+        "properties": {
+          "condition_tree": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Tree"
+          },
+          "indicators": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indicators"
+          }
+        },
+        "type": "object",
+        "title": "StrategyInput",
+        "description": "Strategy definition \u2014 condition_tree + indicators (per ADR-003).\n\n`condition_tree` is a json-logic-style bundle with four nullable\nslots (long_entry / long_exit / short_entry / short_exit), each a\ntree of and/or/not/leaf nodes. `indicators` is an ordered DAG of\nResolvedIndicator dicts referenced by tree leaves via `ref`."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}
