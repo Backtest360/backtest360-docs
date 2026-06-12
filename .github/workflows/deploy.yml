@@ -23,5 +23,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Configure git identity
+        run: |
+          git config user.name "Backtest360 Developers"
+          git config user.email "developers@backtest360.com"
+
       - name: Build and deploy
         run: mkdocs gh-deploy --force
