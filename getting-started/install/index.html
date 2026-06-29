@@ -281,7 +281,7 @@
           
   
   
-  SDK Reference
+  Client Reference
 
         </a>
       </li>
@@ -542,10 +542,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#install-the-sdk" class="md-nav__link">
+  <a href="#install-the-client" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install the SDK
+        Install the client
       
     </span>
   </a>
@@ -834,7 +834,7 @@
   <span class="md-ellipsis">
     
   
-    SDK Reference
+    Client Reference
   
 
     
@@ -850,7 +850,7 @@
             <span class="md-nav__icon md-icon"></span>
             
   
-    SDK Reference
+    Client Reference
   
 
           </label>
@@ -1274,10 +1274,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#install-the-sdk" class="md-nav__link">
+  <a href="#install-the-client" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Install the SDK
+        Install the client
       
     </span>
   </a>
@@ -1340,17 +1340,17 @@
 <li>Python 3.9+</li>
 <li>An API key from <a href="https://backtest360.com">backtest360.com</a></li>
 </ul>
-<h2 id="install-the-sdk">Install the SDK</h2>
+<h2 id="install-the-client">Install the client</h2>
 <pre><code class="language-bash">pip install backtest360
 </code></pre>
-<p>The SDK depends only on <code>httpx</code> and <code>pandas</code>. No other runtime dependencies.</p>
+<p>The client depends only on <code>httpx</code> and <code>pandas</code>. No other runtime dependencies.</p>
 <h2 id="verify-the-install">Verify the install</h2>
 <pre><code class="language-python">from backtest360 import Client
 print(Client(api_key=&quot;b360_...&quot;).version())
 # {'version': 'x.y.z', 'engine': '...', 'api_contract': '...', 'expected_client_contract': '...'}
 </code></pre>
 <h2 id="optional-data-fetching">Optional: data fetching</h2>
-<p>The SDK does not bundle a data provider — you supply your own OHLCV DataFrame. Common choices:</p>
+<p>The client does not bundle a data provider — you supply your own OHLCV DataFrame. Common choices:</p>
 <pre><code class="language-bash">pip install yfinance           # Yahoo Finance
 pip install tiingo             # Tiingo
 pip install pandas-datareader  # FRED, Quandl, etc.
