@@ -1,0 +1,26 @@
+/* Backtest360 brand theming for MkDocs Material.
+   Header stays neutral (white in light, near-black in dark) so the blue logo
+   reads on both; links and interactive accents use the brand blue #1a6ef5. */
+
+:root {
+  --md-accent-fg-color: #1a6ef5;
+  --md-accent-fg-color--transparent: rgba(26, 110, 245, 0.1);
+}
+
+/* Light scheme: brand-blue links, neutral header. */
+[data-md-color-scheme="default"] {
+  --md-typeset-a-color: #1a6ef5;
+  --md-accent-fg-color: #1a6ef5;
+}
+
+/* Dark scheme: lift the link blue for contrast on the dark surface. */
+[data-md-color-scheme="slate"] {
+  --md-typeset-a-color: #4a8bf7;
+  --md-accent-fg-color: #4a8bf7;
+}
+
+/* Keep the header logo crisp at a sensible size. */
+.md-header__button.md-logo img {
+  height: 1.6rem;
+  width: auto;
+}
