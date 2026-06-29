@@ -1,0 +1,68 @@
+site_name: Backtest360 Docs
+site_url: https://docs.backtest360.com
+docs_dir: docs
+
+theme:
+  name: material
+  logo: assets/logo.svg
+  favicon: assets/favicon.ico
+  palette:
+    - scheme: default
+      primary: white
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: black
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+
+extra_css:
+  - stylesheets/brand.css
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          options:
+            show_source: false
+            docstring_style: google
+            show_root_heading: true
+            show_submodules: false
+  - render_swagger
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - Installation: getting-started/install.md
+    - Authentication: getting-started/authentication.md
+    - Your First Backtest: getting-started/first-backtest.md
+  - Concepts:
+    - Strategy Shape: concepts/strategy-shape.md
+    - Signal vs Execution: concepts/signal-vs-execution.md
+    - Result Anatomy: concepts/result-anatomy.md
+  - Client Reference:
+    - Client: sdk-reference/client.md
+    - Strategy: sdk-reference/strategy.md
+    - Exceptions: sdk-reference/exceptions.md
+  - API Reference: api-reference/index.md
+  - AI Assistants (MCP):
+    - Connect: mcp/connect.md
+    - Tools: mcp/tools.md
+  - How-To:
+    - Use Your Own Data: how-to/use-your-own-data.md
+    - Handle Errors: how-to/handle-errors.md
+    - Set Stops: how-to/set-stops.md

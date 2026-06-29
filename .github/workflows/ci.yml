@@ -1,0 +1,61 @@
+name: checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+env:
+  GITLEAKS_VERSION: 8.27.2
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Default-deny: every tracked file must match an entry in surface-allowlist.
+      - name: Surface allowlist
+        run: |
+          fail=0
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            ok=0
+            while IFS= read -r glob; do
+              case "$glob" in ''|'#'*) continue ;; esac
+              # shellcheck disable=SC2254
+              case "$f" in $glob) ok=1; break ;; esac
+            done < surface-allowlist
+            if [ "$ok" -eq 0 ]; then
+              echo "::error file=$f::not in surface-allowlist"
+              fail=1
+            fi
+          done < <(git ls-files)
+          exit $fail
+
+      # Second line of defence against committed credentials.
+      - name: Install gitleaks
+        run: |
+          curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" -o /tmp/gitleaks.tar.gz
+          tar -xzf /tmp/gitleaks.tar.gz -C /tmp gitleaks
+          sudo install /tmp/gitleaks /usr/local/bin/gitleaks
+          gitleaks version
+
+      - name: Scan for secrets
+        run: gitleaks dir . --no-banner --redact --exit-code 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # Build gate: broken links or missing mkdocstrings targets fail the build.
+      - name: Build (strict)
+        run: mkdocs build --strict

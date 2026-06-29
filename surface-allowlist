@@ -1,0 +1,23 @@
+# Public surface allowlist for the Backtest360 documentation site.
+#
+# This repository follows a default-deny model: every tracked file must match
+# exactly one pattern below. Anything not listed is rejected by the local git
+# hooks and by the allowlist check in the CI workflow. Patterns are matched
+# with shell `case` semantics, so `*` spans path separators.
+
+# Documentation site source (pages, assets, OpenAPI snapshot, custom domain)
+docs/*
+
+# Site configuration
+mkdocs.yml
+requirements.txt
+
+# Project metadata
+README.md
+.gitignore
+
+# CI workflows (exactly one; a second workflow is not approved)
+.github/workflows/ci.yml
+
+# This allowlist
+surface-allowlist
