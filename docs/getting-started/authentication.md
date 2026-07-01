@@ -4,7 +4,7 @@ Every request to the Backtest360 engine requires an `X-API-Key` header. The clie
 
 ## Get a key
 
-Sign up at [backtest360.com](https://backtest360.com) to receive an API key. Keys have the format:
+Get a free key instantly at [backtest360.com/api-access](https://backtest360.com/api-access) — submit your email and a key is issued on the spot and emailed to you; no approval needed. Keys have the format:
 
 ```
 b360_<43 random characters>
@@ -33,11 +33,11 @@ client = Client()  # reads BACKTEST360_API_KEY automatically
 
 - Never commit API keys to source control.
 - Store production keys in an environment variable or secrets manager.
-- Rotate keys from the [account dashboard](https://backtest360.com/account).
+- Rotate a key by re-submitting the same email at [backtest360.com/api-access](https://backtest360.com/api-access) — a new key is issued and the previous one is revoked.
 
 ## Rate limits
 
-Each key carries per-minute (rpm) and per-day (rpd) request limits visible on the account dashboard. The engine returns `429 RATE_LIMIT_EXCEEDED` when a limit is hit.
+Each key carries per-minute (rpm) and per-day (rpd) request limits. The engine returns `429 RATE_LIMIT_EXCEEDED` when a limit is hit.
 
 ## Next
 
