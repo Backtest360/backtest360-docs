@@ -55,9 +55,9 @@ nav:
     - Signal vs Execution: concepts/signal-vs-execution.md
     - Result Anatomy: concepts/result-anatomy.md
   - Client Reference:
-    - Client: sdk-reference/client.md
-    - Strategy: sdk-reference/strategy.md
-    - Exceptions: sdk-reference/exceptions.md
+    - Client: client-reference/client.md
+    - Strategy: client-reference/strategy.md
+    - Exceptions: client-reference/exceptions.md
   - API Reference: api-reference/index.md
   - AI Assistants (MCP):
     - Connect: mcp/connect.md

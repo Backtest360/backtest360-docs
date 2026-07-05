@@ -72,4 +72,4 @@ for name, value in sorted(result.stats.items()):
     print(f"{name:30s} {value}")
 ```
 
-See [Client Reference](../sdk-reference/client.md) for the full `Result` API.
+See [Client Reference](../client-reference/client.md) for the full `Result` API.

@@ -22,7 +22,7 @@ except Backtest360Error as e:
 
 ## Common codes
 
-See [Exceptions reference](../sdk-reference/exceptions.md) for the full list.
+See [Exceptions reference](../client-reference/exceptions.md) for the full list.
 
 ## Retrying on 429
 
