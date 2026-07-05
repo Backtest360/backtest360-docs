@@ -86,4 +86,4 @@ print(result.stats["Beta"])
 ## Next
 
 - [Concepts: Strategy Shape](../concepts/strategy-shape.md)
-- [Client Reference](../sdk-reference/client.md)
+- [Client Reference](../client-reference/client.md)

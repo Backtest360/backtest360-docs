@@ -36,7 +36,7 @@ result.strategy_equity.plot(title="Equity curve")
 - **[Installation](getting-started/install.md)** — `pip install backtest360`
 - **[Authentication](getting-started/authentication.md)** — get and use your API key
 - **[Your first backtest](getting-started/first-backtest.md)** — end-to-end walkthrough
-- **[Client Reference](sdk-reference/client.md)** — full `Client`, `Strategy`, and helper class docs
+- **[Client Reference](client-reference/client.md)** — full `Client`, `Strategy`, and helper class docs
 - **[API Reference](api-reference/index.md)** — interactive REST API browser
 
 ## Need help?
