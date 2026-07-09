@@ -3,10 +3,9 @@
 # Generated file — do not edit by hand. Edit the shared source and re-run the sync.
 #
 # Extends the bundled default ruleset and allows documentation placeholders and
-# test fixtures that look key-shaped but are not secrets. A real API key is the
-# `b360_` prefix followed by 43 random base64url characters; both allowances
-# below are narrower than that, so a genuine key committed by mistake is still
-# caught.
+# test fixtures that look key-shaped but are not secrets. A real API key is far
+# longer than either allowance below, so a genuine key committed by mistake is
+# still caught.
 
 [extend]
 useDefault = true
@@ -17,6 +16,6 @@ regexes = [
   # Truncated placeholder in docs, e.g. "b360_a3f9...".
   '''b360_[A-Za-z0-9_-]*\.\.\.''',
   # Test fixtures such as "b360_resolved" — 20 chars or fewer after the prefix,
-  # anchored, so this can never match a prefix of a full-length key.
+  # anchored, so this can never match part of a real key.
   '''^b360_[A-Za-z0-9_-]{1,20}$''',
 ]
