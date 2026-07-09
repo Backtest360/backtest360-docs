@@ -19,5 +19,8 @@ README.md
 # CI workflows (exactly one; a second workflow is not approved)
 .github/workflows/ci.yml
 
+# Secret-scan config (generated)
+.gitleaks.toml
+
 # This allowlist
 surface-allowlist
