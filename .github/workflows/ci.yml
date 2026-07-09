@@ -15,7 +15,7 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       # Default-deny: every tracked file must match an entry in surface-allowlist.
       - name: Surface allowlist
@@ -47,7 +47,7 @@ jobs:
       - name: Scan for secrets
         run: gitleaks dir . --no-banner --redact --exit-code 1
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.11'
           cache: pip
