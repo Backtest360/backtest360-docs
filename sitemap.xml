@@ -2,66 +2,66 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://docs.backtest360.com/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/api-reference/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.backtest360.com/client-reference/client/</loc>
+         <lastmod>2026-07-13</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.backtest360.com/client-reference/exceptions/</loc>
+         <lastmod>2026-07-13</lastmod>
+    </url>
+    <url>
+         <loc>https://docs.backtest360.com/client-reference/strategy/</loc>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/concepts/result-anatomy/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/concepts/signal-vs-execution/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/concepts/strategy-shape/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/getting-started/authentication/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/getting-started/first-backtest/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/getting-started/install/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/how-to/handle-errors/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/how-to/set-stops/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/how-to/use-your-own-data/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/mcp/connect/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
     <url>
          <loc>https://docs.backtest360.com/mcp/tools/</loc>
-         <lastmod>2026-06-29</lastmod>
-    </url>
-    <url>
-         <loc>https://docs.backtest360.com/sdk-reference/client/</loc>
-         <lastmod>2026-06-29</lastmod>
-    </url>
-    <url>
-         <loc>https://docs.backtest360.com/sdk-reference/exceptions/</loc>
-         <lastmod>2026-06-29</lastmod>
-    </url>
-    <url>
-         <loc>https://docs.backtest360.com/sdk-reference/strategy/</loc>
-         <lastmod>2026-06-29</lastmod>
+         <lastmod>2026-07-13</lastmod>
     </url>
 </urlset>

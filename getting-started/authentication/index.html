@@ -277,7 +277,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="../../sdk-reference/client/" class="md-tabs__link">
+        <a href="../../client-reference/client/" class="md-tabs__link">
           
   
   
@@ -863,7 +863,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sdk-reference/client/" class="md-nav__link">
+      <a href="../../client-reference/client/" class="md-nav__link">
         
   
   
@@ -891,7 +891,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sdk-reference/strategy/" class="md-nav__link">
+      <a href="../../client-reference/strategy/" class="md-nav__link">
         
   
   
@@ -919,7 +919,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../sdk-reference/exceptions/" class="md-nav__link">
+      <a href="../../client-reference/exceptions/" class="md-nav__link">
         
   
   
@@ -1337,7 +1337,7 @@
 <h1 id="authentication">Authentication</h1>
 <p>Every request to the Backtest360 engine requires an <code>X-API-Key</code> header. The client handles this automatically once you supply the key.</p>
 <h2 id="get-a-key">Get a key</h2>
-<p>Sign up at <a href="https://backtest360.com">backtest360.com</a> to receive an API key. Keys have the format:</p>
+<p>Get a free key instantly at <a href="https://backtest360.com/api-access">backtest360.com/api-access</a> — submit your email and a key is issued on the spot and emailed to you; no approval needed. Keys have the format:</p>
 <pre><code>b360_&lt;43 random characters&gt;
 </code></pre>
 <h2 id="pass-the-key-to-the-client">Pass the key to the client</h2>
@@ -1354,10 +1354,10 @@ client = Client(api_key=&quot;b360_...&quot;)
 <ul>
 <li>Never commit API keys to source control.</li>
 <li>Store production keys in an environment variable or secrets manager.</li>
-<li>Rotate keys from the <a href="https://backtest360.com/account">account dashboard</a>.</li>
+<li>Rotate a key by re-submitting the same email at <a href="https://backtest360.com/api-access">backtest360.com/api-access</a> — a new key is issued and the previous one is revoked.</li>
 </ul>
 <h2 id="rate-limits">Rate limits</h2>
-<p>Each key carries per-minute (rpm) and per-day (rpd) request limits visible on the account dashboard. The engine returns <code>429 RATE_LIMIT_EXCEEDED</code> when a limit is hit.</p>
+<p>Each key carries per-minute (rpm) and per-day (rpd) request limits. The engine returns <code>429 RATE_LIMIT_EXCEEDED</code> when a limit is hit.</p>
 <h2 id="next">Next</h2>
 <p><a href="../first-backtest/">Run your first backtest →</a></p>
 
