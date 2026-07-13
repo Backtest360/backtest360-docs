@@ -1,0 +1,2021 @@
+{
+  "components": {
+    "schemas": {
+      "BacktestRequest": {
+        "description": "POST /api/backtest request -- the unified `{run, legs}` contract (U3).\nReplaces the pre-U3 scalar shape and the separate /api/backtest/compare\nendpoint: 1 leg is a plain backtest, 2+ legs is a comparison, and a\n`benchmark: true` leg or explicit `run.reference` produces per-leg\n`relative` metrics.",
+        "properties": {
+          "legs": {
+            "items": {
+              "$ref": "#/components/schemas/LegSpec"
+            },
+            "title": "Legs",
+            "type": "array"
+          },
+          "run": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RunSpec"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "title": "BacktestRequest",
+        "type": "object"
+      },
+      "DataSourceRef": {
+        "properties": {
+          "config": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Config"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Frequency"
+          },
+          "ohlcv": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/OHLCVInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          },
+          "symbol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Symbol"
+          }
+        },
+        "title": "DataSourceRef",
+        "type": "object"
+      },
+      "ExecutionConfig": {
+        "description": "Execution, costs, risk, sizing, timing \u2014 all in one.",
+        "properties": {
+          "close_hour": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Close Hour"
+          },
+          "entry_anchor": {
+            "default": "open",
+            "title": "Entry Anchor",
+            "type": "string"
+          },
+          "entry_fill": {
+            "default": "exact",
+            "title": "Entry Fill",
+            "type": "string"
+          },
+          "entry_window": {
+            "default": 0,
+            "title": "Entry Window",
+            "type": "integer"
+          },
+          "exit_anchor": {
+            "default": "close",
+            "title": "Exit Anchor",
+            "type": "string"
+          },
+          "exit_fill": {
+            "default": "exact",
+            "title": "Exit Fill",
+            "type": "string"
+          },
+          "exit_window": {
+            "default": 0,
+            "title": "Exit Window",
+            "type": "integer"
+          },
+          "extrapolate_signal": {
+            "default": false,
+            "title": "Extrapolate Signal",
+            "type": "boolean"
+          },
+          "fee_pct": {
+            "default": 0.0,
+            "exclusiveMaximum": 1.0,
+            "minimum": 0.0,
+            "title": "Fee Pct",
+            "type": "number"
+          },
+          "leverage_limit": {
+            "anyOf": [
+              {
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Leverage Limit"
+          },
+          "max_drawdown_limit": {
+            "anyOf": [
+              {
+                "exclusiveMaximum": 1.0,
+                "exclusiveMinimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Drawdown Limit"
+          },
+          "on_bad_data": {
+            "default": "raise",
+            "enum": [
+              "raise",
+              "zero"
+            ],
+            "title": "On Bad Data",
+            "type": "string"
+          },
+          "open_hour": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Open Hour"
+          },
+          "position_weight": {
+            "default": 1.0,
+            "title": "Position Weight",
+            "type": "number"
+          },
+          "random_seed": {
+            "default": 42,
+            "title": "Random Seed",
+            "type": "integer"
+          },
+          "risk_free_rate": {
+            "default": 0.0,
+            "title": "Risk Free Rate",
+            "type": "number"
+          },
+          "signal_frequency": {
+            "default": "daily",
+            "title": "Signal Frequency",
+            "type": "string"
+          },
+          "slippage_bps": {
+            "default": 0.0,
+            "exclusiveMaximum": 10000.0,
+            "minimum": 0.0,
+            "title": "Slippage Bps",
+            "type": "number"
+          },
+          "stop_atr_period": {
+            "default": 14,
+            "title": "Stop Atr Period",
+            "type": "integer"
+          },
+          "stop_cooldown_bars": {
+            "default": 0,
+            "title": "Stop Cooldown Bars",
+            "type": "integer"
+          },
+          "stop_reentry": {
+            "default": "immediate",
+            "title": "Stop Reentry",
+            "type": "string"
+          },
+          "stop_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Type"
+          },
+          "stop_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stop Value"
+          },
+          "strict_anchors": {
+            "default": false,
+            "title": "Strict Anchors",
+            "type": "boolean"
+          },
+          "tp_atr_period": {
+            "default": 14,
+            "title": "Tp Atr Period",
+            "type": "integer"
+          },
+          "tp_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tp Type"
+          },
+          "tp_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tp Value"
+          },
+          "vol_scaled_slippage": {
+            "default": false,
+            "title": "Vol Scaled Slippage",
+            "type": "boolean"
+          },
+          "vol_slippage_lookback": {
+            "default": 20,
+            "minimum": 2.0,
+            "title": "Vol Slippage Lookback",
+            "type": "integer"
+          },
+          "vol_target": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Vol Target"
+          },
+          "vol_target_lookback": {
+            "default": 20,
+            "minimum": 2.0,
+            "title": "Vol Target Lookback",
+            "type": "integer"
+          }
+        },
+        "title": "ExecutionConfig",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "LatestSignalRequest": {
+        "description": "POST /api/latest-signal request -- inherently single-strategy (there\nis no P&L or cross-leg comparison to unify), so it keeps the pre-U3\nscalar shape rather than the {run, legs} contract used by /api/backtest.",
+        "properties": {
+          "data_inputs": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TimeSeriesInput"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Inputs"
+          },
+          "data_source": {
+            "$ref": "#/components/schemas/DataSourceRef"
+          },
+          "execution": {
+            "$ref": "#/components/schemas/ExecutionConfig",
+            "default": {
+              "entry_anchor": "open",
+              "entry_fill": "exact",
+              "entry_window": 0,
+              "exit_anchor": "close",
+              "exit_fill": "exact",
+              "exit_window": 0,
+              "extrapolate_signal": false,
+              "fee_pct": 0.0,
+              "on_bad_data": "raise",
+              "position_weight": 1.0,
+              "random_seed": 42,
+              "risk_free_rate": 0.0,
+              "signal_frequency": "daily",
+              "slippage_bps": 0.0,
+              "stop_atr_period": 14,
+              "stop_cooldown_bars": 0,
+              "stop_reentry": "immediate",
+              "strict_anchors": false,
+              "tp_atr_period": 14,
+              "vol_scaled_slippage": false,
+              "vol_slippage_lookback": 20,
+              "vol_target_lookback": 20
+            }
+          },
+          "signals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SignalsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "strategy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StrategyInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "data_source"
+        ],
+        "title": "LatestSignalRequest",
+        "type": "object"
+      },
+      "LegSpec": {
+        "description": "One leg of a /api/backtest run -- a plain strategy, a precomputed- signals leg, or a `benchmark: true` preset (a forced always-long, zero-cost, no-stops baseline). 1..20 legs per request; 1 leg = a plain backtest with identical semantics to the pre-U3 scalar shape.\n\nStructural / cross-leg validation (uniqueness, benchmark-forbidden fields, exposure bounds, reference resolution, period / signal_frequency agreement) happens in the endpoint handler so every violation gets its own 400 `code` -- see `_validate_and_prepare_legs`.",
+        "properties": {
+          "benchmark": {
+            "default": false,
+            "title": "Benchmark",
+            "type": "boolean"
+          },
+          "data_inputs": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "$ref": "#/components/schemas/TimeSeriesInput"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Data Inputs"
+          },
+          "data_source": {
+            "$ref": "#/components/schemas/DataSourceRef"
+          },
+          "execution": {
+            "$ref": "#/components/schemas/ExecutionConfig",
+            "default": {
+              "entry_anchor": "open",
+              "entry_fill": "exact",
+              "entry_window": 0,
+              "exit_anchor": "close",
+              "exit_fill": "exact",
+              "exit_window": 0,
+              "extrapolate_signal": false,
+              "fee_pct": 0.0,
+              "on_bad_data": "raise",
+              "position_weight": 1.0,
+              "random_seed": 42,
+              "risk_free_rate": 0.0,
+              "signal_frequency": "daily",
+              "slippage_bps": 0.0,
+              "stop_atr_period": 14,
+              "stop_cooldown_bars": 0,
+              "stop_reentry": "immediate",
+              "strict_anchors": false,
+              "tp_atr_period": 14,
+              "vol_scaled_slippage": false,
+              "vol_slippage_lookback": 20,
+              "vol_target_lookback": 20
+            }
+          },
+          "exposure": {
+            "default": 1.0,
+            "title": "Exposure",
+            "type": "number"
+          },
+          "id": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Id",
+            "type": "string"
+          },
+          "include_leaf_series": {
+            "default": false,
+            "title": "Include Leaf Series",
+            "type": "boolean"
+          },
+          "signals": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SignalsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "strategy": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StrategyInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "data_source"
+        ],
+        "title": "LegSpec",
+        "type": "object"
+      },
+      "OHLCVInput": {
+        "description": "Inline OHLCV data as parallel arrays.",
+        "properties": {
+          "close": {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 1000000,
+            "title": "Close",
+            "type": "array"
+          },
+          "dates": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1000000,
+            "title": "Dates",
+            "type": "array"
+          },
+          "high": {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 1000000,
+            "title": "High",
+            "type": "array"
+          },
+          "low": {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 1000000,
+            "title": "Low",
+            "type": "array"
+          },
+          "open": {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 1000000,
+            "title": "Open",
+            "type": "array"
+          },
+          "volume": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "number"
+                },
+                "maxItems": 1000000,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Volume"
+          }
+        },
+        "required": [
+          "dates",
+          "open",
+          "high",
+          "low",
+          "close"
+        ],
+        "title": "OHLCVInput",
+        "type": "object"
+      },
+      "RunSpec": {
+        "description": "Run-level overrides shared across every leg of a /api/backtest call.",
+        "properties": {
+          "end": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "reference": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reference"
+          },
+          "response_detail": {
+            "default": "full",
+            "enum": [
+              "summary",
+              "full"
+            ],
+            "title": "Response Detail",
+            "type": "string"
+          },
+          "signal_frequency": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Signal Frequency"
+          },
+          "start": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start"
+          },
+          "stats_keys": {
+            "default": "ids",
+            "enum": [
+              "labels",
+              "ids"
+            ],
+            "title": "Stats Keys",
+            "type": "string"
+          }
+        },
+        "title": "RunSpec",
+        "type": "object"
+      },
+      "SignalsInput": {
+        "description": "Pre-computed signals as parallel arrays.",
+        "properties": {
+          "dates": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1000000,
+            "title": "Dates",
+            "type": "array"
+          },
+          "strategy_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": "Custom",
+            "title": "Strategy Name"
+          },
+          "values": {
+            "items": {
+              "type": "integer"
+            },
+            "maxItems": 1000000,
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "title": "SignalsInput",
+        "type": "object"
+      },
+      "StatsConfig": {
+        "properties": {
+          "risk_free_rate": {
+            "default": 0.0,
+            "title": "Risk Free Rate",
+            "type": "number"
+          },
+          "trading_days_per_year": {
+            "title": "Trading Days Per Year",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "trading_days_per_year"
+        ],
+        "title": "StatsConfig",
+        "type": "object"
+      },
+      "StatsRequest": {
+        "properties": {
+          "benchmark_returns": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StatsReturnsInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "config": {
+            "$ref": "#/components/schemas/StatsConfig"
+          },
+          "returns": {
+            "$ref": "#/components/schemas/StatsReturnsInput"
+          },
+          "stats_keys": {
+            "default": "ids",
+            "enum": [
+              "labels",
+              "ids"
+            ],
+            "title": "Stats Keys",
+            "type": "string"
+          },
+          "trades": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/StatsTradeInput"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trades"
+          }
+        },
+        "required": [
+          "returns",
+          "config"
+        ],
+        "title": "StatsRequest",
+        "type": "object"
+      },
+      "StatsReturnsInput": {
+        "properties": {
+          "dates": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Dates",
+            "type": "array"
+          },
+          "values": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dates",
+          "values"
+        ],
+        "title": "StatsReturnsInput",
+        "type": "object"
+      },
+      "StatsTradeInput": {
+        "description": "Single trade record for /api/stats. Accepts the same shape as run_result.trades produced by run_backtest.",
+        "properties": {
+          "costs": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Costs"
+          },
+          "direction": {
+            "title": "Direction",
+            "type": "integer"
+          },
+          "entry_date": {
+            "title": "Entry Date",
+            "type": "string"
+          },
+          "entry_price": {
+            "title": "Entry Price",
+            "type": "number"
+          },
+          "exit_date": {
+            "title": "Exit Date",
+            "type": "string"
+          },
+          "exit_price": {
+            "title": "Exit Price",
+            "type": "number"
+          },
+          "exit_reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Exit Reason"
+          },
+          "holding_bars": {
+            "default": 1,
+            "title": "Holding Bars",
+            "type": "integer"
+          },
+          "return_gross": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Return Gross"
+          },
+          "return_net": {
+            "title": "Return Net",
+            "type": "number"
+          }
+        },
+        "required": [
+          "entry_date",
+          "exit_date",
+          "direction",
+          "entry_price",
+          "exit_price",
+          "return_net"
+        ],
+        "title": "StatsTradeInput",
+        "type": "object"
+      },
+      "StrategyInput": {
+        "description": "Strategy definition \u2014 condition_tree + indicators.\n\n`condition_tree` is a json-logic-style bundle with four nullable slots (long_entry / long_exit / short_entry / short_exit), each a tree of and/or/not/leaf nodes. `indicators` is an ordered DAG of ResolvedIndicator dicts referenced by tree leaves via `ref`.\n\nA key the strategy schema does not declare \u2014 at the top level, inside an `indicators[]` entry, or inside `condition_tree` \u2014 is rejected with `422 UNKNOWN_FIELD` rather than ignored.",
+        "properties": {
+          "condition_tree": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Condition Tree"
+          },
+          "defaults": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Defaults"
+          },
+          "indicators": {
+            "anyOf": [
+              {
+                "items": {
+                  "additionalProperties": true,
+                  "type": "object"
+                },
+                "maxItems": 128,
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Indicators"
+          },
+          "requires": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Requires"
+          }
+        },
+        "title": "StrategyInput",
+        "type": "object"
+      },
+      "TimeSeriesInput": {
+        "description": "Non-OHLCV time-series input for model indicators (parallel arrays).",
+        "properties": {
+          "dates": {
+            "items": {
+              "type": "string"
+            },
+            "maxItems": 1000000,
+            "title": "Dates",
+            "type": "array"
+          },
+          "values": {
+            "items": {
+              "type": "number"
+            },
+            "maxItems": 1000000,
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "dates",
+          "values"
+        ],
+        "title": "TimeSeriesInput",
+        "type": "object"
+      },
+      "ValidateStrategyRequest": {
+        "description": "Request body for POST /api/validate-strategy.\n\nThe strategy document must be nested under the `strategy` key. Requests missing `strategy`, or carrying unknown top-level fields (e.g. the document's own fields sent at the top level), are rejected with a 422 naming the offending fields.",
+        "properties": {
+          "injected_indicators": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Names of custom indicators the caller will supply as data_inputs at run time. Added to the column allow-list for condition-tree validation without requiring registry entries.",
+            "title": "Injected Indicators"
+          },
+          "scope": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Optional fast-path scope hint: {\"leaf_paths\": [...]}.",
+            "title": "Scope"
+          },
+          "strategy": {
+            "additionalProperties": true,
+            "description": "Strategy document (condition_tree + indicators, or precomputed_signals). Required \u2014 requests without it are rejected.",
+            "title": "Strategy",
+            "type": "object"
+          }
+        },
+        "title": "ValidateStrategyRequest",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "ValidationErrorItem": {
+        "description": "One structured validation error.",
+        "properties": {
+          "code": {
+            "description": "Machine-readable error code, e.g. UNKNOWN_INDICATOR.",
+            "title": "Code",
+            "type": "string"
+          },
+          "context": {
+            "additionalProperties": true,
+            "description": "Extra detail per error code (e.g. unknown column names).",
+            "title": "Context",
+            "type": "object"
+          },
+          "location": {
+            "description": "JSON-Pointer into the offending node, e.g. /condition_tree/long_entry.",
+            "title": "Location",
+            "type": "string"
+          },
+          "message": {
+            "description": "Human-readable explanation.",
+            "title": "Message",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "location",
+          "message"
+        ],
+        "title": "ValidationErrorItem",
+        "type": "object"
+      },
+      "ValidationFailure": {
+        "description": "422 body returned when a strategy/indicator document fails validation.",
+        "properties": {
+          "errors": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationErrorItem"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "valid": {
+            "const": false,
+            "default": false,
+            "title": "Valid",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "errors"
+        ],
+        "title": "ValidationFailure",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "title": "Backtest360 API",
+    "version": "0.12.1"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/backtest": {
+      "post": {
+        "description": "Run 1..20 legs and return the unified ``{run, legs}`` response.\n\nA single leg behaves exactly like a plain backtest. 2+ legs is a comparison; a benchmark: true leg (or an explicit run.reference) adds a relative block (Alpha/Beta/IR/Tracking Error/Up-Down Capture) to every OTHER leg.\n\n**Premium features.** The following require an upgraded subscription; requests using them without one return `403 PLAN_UPGRADE_REQUIRED`:\n\n- Server-side symbol fetch \u2014 otherwise inline OHLCV data must be supplied.\n\n- The full statistic set \u2014 otherwise a 20-statistic summary is returned.",
+        "operationId": "run_backtest_endpoint_api_backtest_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Backtest",
+        "tags": [
+          "Backtesting"
+        ]
+      }
+    },
+    "/api/backtest/export": {
+      "post": {
+        "description": "Re-run 1 to 20 legs using the same request body as /api/backtest and return a multi-sheet Excel workbook instead of a JSON response: a Comparison sheet (headline stats per leg plus the alignment report), a Relative Metrics sheet when a reference leg is present, and per-leg Statistics/Trades/Drawdowns/Equity+Returns/Market Data sheets. run.response_detail and run.stats_keys do not apply to this endpoint (there is no JSON body to trim or re-key).\n\n**Premium features.** The following require an upgraded subscription; requests using them without one return `403 PLAN_UPGRADE_REQUIRED`:\n\n- Server-side symbol fetch \u2014 otherwise inline OHLCV data must be supplied.\n\n**Premium access.** This endpoint requires an upgraded subscription; requests without one return `403 SCOPE_DENIED`.",
+        "operationId": "export_backtest_endpoint_api_backtest_export_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              },
+              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": {
+                "schema": {
+                  "format": "binary",
+                  "type": "string"
+                }
+              }
+            },
+            "description": "The multi-sheet .xlsx comparison workbook."
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "\ud83d\udd12 Export Backtest Workbook",
+        "tags": [
+          "Backtesting"
+        ]
+      }
+    },
+    "/api/backtest/test": {
+      "post": {
+        "description": "Same ``{run, legs}`` request shape as /api/backtest \u2014 returns dummy\nper-leg results instantly.",
+        "operationId": "test_backtest_api_backtest_test_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BacktestRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Test Backtest",
+        "tags": [
+          "Backtesting"
+        ]
+      }
+    },
+    "/api/bar-frequencies": {
+      "get": {
+        "description": "Return the server-wide bar-frequency capability set plus the hard signal-by-execution compatibility matrix.\n\n`valid_execution_bars` maps each signal frequency to the execution bar frequencies the engine supports for it; only the listed (signal_frequency, execution_bar_frequency) pairs are valid. `open_hour`/`close_hour` are meaningful in exactly one case, flagged by `open_close_hour_applies_when`: a daily signal with hourly execution.",
+        "operationId": "get_bar_frequencies_api_bar_frequencies_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Bar Frequencies",
+        "tags": [
+          "Reference"
+        ]
+      }
+    },
+    "/api/execution-modes": {
+      "get": {
+        "description": "Return valid execution anchors and fill algorithms.\n\nArgs:\n    is_24h: Whether the market trades 24h (e.g., crypto). Default True.\n    anchor: If provided, return valid fill algorithms for this anchor only.",
+        "operationId": "get_execution_modes_api_execution_modes_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "is_24h",
+            "required": false,
+            "schema": {
+              "default": true,
+              "title": "Is 24H",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "query",
+            "name": "anchor",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Anchor"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Execution Modes",
+        "tags": [
+          "Reference"
+        ]
+      }
+    },
+    "/api/indicators": {
+      "get": {
+        "description": "Return indicator registry with parameter schemas + strategy-logic metadata.\n\nExtended to expose `kind`, `arity`, `value_dtype`, `output_columns`, `tags`, plus a top-level `version` SHA-256 over registry contents for client cache invalidation.\n\nThe optional `descriptions=false` query param omits the per-entry `description` field (additive; default-true keeps the response shape).",
+        "operationId": "get_indicators_api_indicators_get",
+        "parameters": [
+          {
+            "description": "Include the per-indicator `description` field. Default true (unchanged response). Set false to omit `description` from every entry \u2014 halves the payload for callers that don't need it; all other fields are unchanged.",
+            "in": "query",
+            "name": "descriptions",
+            "required": false,
+            "schema": {
+              "default": true,
+              "description": "Include the per-indicator `description` field. Default true (unchanged response). Set false to omit `description` from every entry \u2014 halves the payload for callers that don't need it; all other fields are unchanged.",
+              "title": "Descriptions",
+              "type": "boolean"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Indicators",
+        "tags": [
+          "Reference"
+        ]
+      }
+    },
+    "/api/latest-signal": {
+      "post": {
+        "description": "Return the strategy's latest signal for the most recent bar of OHLCV.\n\nSingle-strategy only \u2014 there is no P&L or cross-leg comparison to unify, so this endpoint keeps its own single-run request shape rather than the multi-leg comparison shape /api/backtest uses.\n\nReturns only the latest bar's signal value plus the latest indicator panels \u2014 no P&L, statistics, or equity curve. Use it to check what the strategy would signal right now (e.g. for live trading).\n\n**Premium features.** The following require an upgraded subscription; requests using them without one return `403 PLAN_UPGRADE_REQUIRED`:\n\n- Server-side symbol fetch \u2014 otherwise inline OHLCV data must be supplied.",
+        "operationId": "latest_signal_endpoint_api_latest_signal_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LatestSignalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Latest Signal",
+        "tags": [
+          "Backtesting"
+        ]
+      }
+    },
+    "/api/me": {
+      "get": {
+        "description": "Introspect the calling API key: the permission scopes it carries, its numeric limits, current usage against those limits, and capability flags.\n\nAny valid key can call this \u2014 a key can always see its own permissions and limits. Usage counts include this request itself, consistent with the X-RateLimit-* headers on the same response. `max_bars_per_run` is null when the key has no bar cap; `usage` mirrors the rate-limit headers and adds the concurrency picture, which has no header.",
+        "operationId": "get_me_api_me_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Key Introspection",
+        "tags": [
+          "Account"
+        ]
+      }
+    },
+    "/api/operators": {
+      "get": {
+        "description": "Return condition operators for building strategy logic.",
+        "operationId": "get_operators_api_operators_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Operators",
+        "tags": [
+          "Reference"
+        ]
+      }
+    },
+    "/api/schemas/strategy": {
+      "get": {
+        "description": "Return the JSON Schema (Draft 2020-12) for the Strategy document.",
+        "operationId": "get_strategy_schema_api_schemas_strategy_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Strategy Schema",
+        "tags": [
+          "Reference"
+        ]
+      }
+    },
+    "/api/sections": {
+      "get": {
+        "description": "Return section \u2192 field groupings for the performance stats, plus the stable metric catalog.\n\nEach section carries `fields_summary` and `fields_full` arrays listing the display labels currently present in the `stats` dict, in render order. `metrics` is the flat catalog mapping each metric's permanent snake_case `id` to its current display label.\n\nDo not key on the section field labels \u2014 they are mutable and may be reworded. Key on `metrics[].id` (stable, never changes) and use the section arrays only for grouping and order; render `metrics[].label` for display.",
+        "operationId": "get_sections_api_sections_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Sections",
+        "tags": [
+          "Reference"
+        ]
+      }
+    },
+    "/api/sizing-methods": {
+      "get": {
+        "description": "Return position sizing methods with parameters.",
+        "operationId": "get_sizing_methods_api_sizing_methods_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Sizing Methods",
+        "tags": [
+          "Reference"
+        ]
+      }
+    },
+    "/api/stats": {
+      "post": {
+        "description": "Compute performance metrics from a return series.\n\n**Premium features.** The following require an upgraded subscription; requests using them without one return `403 PLAN_UPGRADE_REQUIRED`:\n\n- The full statistic set \u2014 otherwise a 20-statistic summary is returned.",
+        "operationId": "compute_stats_api_stats_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StatsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Compute Stats",
+        "tags": [
+          "Analysis"
+        ]
+      }
+    },
+    "/api/stop-types": {
+      "get": {
+        "description": "Return stop loss types with per-type parameters.",
+        "operationId": "get_stop_types_api_stop_types_get",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Stop Types",
+        "tags": [
+          "Reference"
+        ]
+      }
+    },
+    "/api/validate-indicator": {
+      "post": {
+        "description": "Validate a single indicator entry (name + params + upstream).\n\nRequest body: {\"name\": \"rsi\", \"params\": {\"period\": 14}, \"upstream\": []}\nReturns 200 {valid: true, warmup_bars: int} or 422 {valid: false, errors: [...]}.",
+        "operationId": "post_validate_indicator_api_validate_indicator_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "title": "Payload",
+                "type": "object"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationFailure"
+                }
+              }
+            },
+            "description": "Document failed validation. Each error carries a machine-readable `code` and a JSON-Pointer `location` into the offending node."
+          }
+        },
+        "summary": "Validate Indicator",
+        "tags": [
+          "Strategy"
+        ]
+      }
+    },
+    "/api/validate-strategy": {
+      "post": {
+        "description": "Validate a Strategy document without running a backtest.\n\nBody shape:\n    {\n      \"strategy\": <Strategy doc>,\n      \"scope\": {\"leaf_paths\": [...]},     # optional \u2014 validate only these leaves\n      \"injected_indicators\": [\"name1\"]    # optional \u2014 column names the caller\n                                          # supplies as data_inputs at run time\n    }\n\ninjected_indicators names additional columns that will be available at run time (as inline data_inputs series) but are not registered indicators. The validator treats them as available columns so condition_tree leaves referencing them pass; they are not checked against the indicator registry.\n\nReturns 200 with {valid: true, warmup_bars, referenced_indicators,\nreferenced_columns_per_slot, warnings: []} on success, or 422 with\n{valid: false, errors: [...]} on failure. Each error carries a structured\n`code` and a JSON-Pointer `location`.",
+        "operationId": "post_validate_strategy_api_validate_strategy_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Client-Contract",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-Client-Contract"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidateStrategyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationFailure"
+                }
+              }
+            },
+            "description": "Document failed validation. Each error carries a machine-readable `code` and a JSON-Pointer `location` into the offending node."
+          }
+        },
+        "summary": "Validate Strategy",
+        "tags": [
+          "Strategy"
+        ]
+      }
+    },
+    "/api/version": {
+      "get": {
+        "description": "Return engine version and API contract number.",
+        "operationId": "get_version_api_version_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Version",
+        "tags": [
+          "Public"
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "description": "No authentication required.",
+      "name": "Public"
+    },
+    {
+      "description": "Introspection for the calling API key. Any valid key \u2014 no particular plan required.",
+      "name": "Account"
+    },
+    {
+      "description": "Catalog and configuration data.",
+      "name": "Reference"
+    },
+    {
+      "description": "Strategy and indicator validation.",
+      "name": "Strategy"
+    },
+    {
+      "description": "Market data access and file parsing.",
+      "name": "Data"
+    },
+    {
+      "description": "Run backtests and compute signals.",
+      "name": "Backtesting"
+    },
+    {
+      "description": "Performance statistics.",
+      "name": "Analysis"
+    }
+  ]
+}
