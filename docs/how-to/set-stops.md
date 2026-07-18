@@ -1,6 +1,7 @@
 # Set Stops
 
-Use the `Risk` dataclass to add stop-loss or drawdown protection.
+Use the `Risk` configuration to add a stop-loss or a drawdown limit to a backtest. Build
+a `Risk` object and pass it to `backtest()` with the `risk=` keyword.
 
 ## Fixed percentage stop
 
@@ -36,9 +37,12 @@ risk = Risk(stop="trailing", value=0.08, max_drawdown=0.25)
 
 ## Pass to backtest
 
+Pass the `Risk` object to `backtest()` and read the realized drawdown back from the
+statistics. Metrics are keyed by their stable id, so `max_drawdown` is the drawdown value:
+
 ```python
 result = client.backtest(strategy, df, risk=risk)
-print(result.stats["Max Drawdown"])
+print(result.stats["max_drawdown"])   # e.g. -0.18
 ```
 
 ## Stop types reference

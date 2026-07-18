@@ -1,5 +1,11 @@
 # Strategy
 
+`Strategy` builds the strategy document the engine runs. Start from a template — for
+example `Strategy.rsi_threshold_long()` or `Strategy.ma_crossover()` — or compose one
+from indicators with `Strategy.indicator(...)`. The configuration dataclasses below
+(`Execution`, `Costs`, `Risk`, `Sizing`) tune how a strategy is executed and are passed
+to `Client.backtest()` as keyword arguments.
+
 ::: backtest360.strategy.Strategy
     options:
       show_source: false
