@@ -61,6 +61,14 @@ pip install backtest360-mcp
 }
 ```
 
+`BACKTEST360_API_KEY` is the only required variable. The rest are optional:
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `BACKTEST360_ENGINE_URL` | `https://api.backtest360.com` | The engine the server forwards to. |
+| `BACKTEST360_MCP_TIMEOUT` | `300` | Per-request timeout, in seconds. |
+| `BACKTEST360_MCP_MAX_OUTPUT_BYTES` | `100000` | Cap on the size of a tool response. |
+
 The local server talks to the same engine; your key governs access either way.
 
 ## Authentication

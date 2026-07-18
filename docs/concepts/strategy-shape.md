@@ -1,9 +1,11 @@
 # Strategy Shape
 
-A strategy tells the engine *when* to enter and exit positions. It contains two parts:
+A strategy tells the engine *when* to enter and exit positions. A strategy document has two parts:
 
-- **Condition expressions** — boolean strings referencing indicator output columns
-- **Indicator list** — which indicators to compute, and with what parameters
+- **Condition expressions** — boolean strings that reference indicator output columns, for example `"rsi < 30"`.
+- **Indicator list** — which indicators to compute, and with what parameters.
+
+The engine evaluates the expressions against the computed indicators on each bar to produce the signal series. How that signal becomes a fill is a separate concern — see [Signal vs execution](signal-vs-execution.md).
 
 ## Minimal example
 
@@ -18,11 +20,11 @@ strat = Strategy(
 )
 ```
 
-The expression `"rsi < 30"` references the `output` column of the `rsi` indicator (the default ref when only one RSI is declared).
+The expression `"rsi < 30"` references the output column of the `rsi` indicator — `rsi` is the default column name when only one RSI is declared.
 
 ## Indicator refs
 
-When you need the same indicator with different parameters, give each a unique `ref`:
+When you need the same indicator with different parameters, give each a unique `ref` and reference it by that name in your expressions:
 
 ```python
 strat = Strategy(
@@ -36,9 +38,9 @@ strat = Strategy(
 )
 ```
 
-## Crossover via transform indicators
+## Crossovers via transform indicators
 
-Transform indicators take other indicators as input. `cross_above` fires when `upstream[0]` crosses above `upstream[1]`:
+A transform indicator takes other indicators as input. `cross_above` fires when `upstream[0]` crosses above `upstream[1]`; `cross_below` is its mirror. Declare the two source indicators, then a transform that consumes them:
 
 ```python
 strat = Strategy(
@@ -62,7 +64,7 @@ strat = Strategy(
 
 ## Short selling
 
-Add `short_entry` and `short_exit` expressions:
+Add `short_entry` and `short_exit` expressions to trade both directions:
 
 ```python
 strat = Strategy(
@@ -77,22 +79,24 @@ strat = Strategy(
 
 ## Pre-built templates
 
+Each of these class methods returns a ready-to-run `Strategy`:
+
 ```python
 Strategy.rsi_threshold_long()   # RSI(14) oversold entry / overbought exit
 Strategy.rsi_mean_reversion()   # RSI(14) recovery-zone entry / neutral exit
-Strategy.ma_crossover()         # SMA(10) × SMA(50) crossover
-Strategy.momentum_6m_long()     # ROC(126) > 0
+Strategy.ma_crossover()         # SMA(10) x SMA(50) crossover
+Strategy.momentum_6m_long()     # 6-month momentum, long when positive
 ```
 
-These `Strategy.*` class methods are the available pre-built templates — each returns a ready-to-run `Strategy`.
+They are a good starting point and a template for your own strategies.
 
-## Indicator library
+## Browse the indicator library
 
-Browse available indicators and their parameter schemas:
+`list_indicators()` returns every available indicator and its parameter schema:
 
 ```python
 for ind in client.list_indicators():
     print(ind["name"], ind.get("params", {}))
 ```
 
-Or see the [API Reference](../api-reference/index.md).
+Validate a strategy against the registry before running it with `client.validate_strategy(strat)`; see [Your first backtest](../getting-started/first-backtest.md). The full indicator and metric catalogs are also in the [API Reference](../api-reference/index.md).
