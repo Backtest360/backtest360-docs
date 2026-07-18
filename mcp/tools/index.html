@@ -1021,6 +1021,94 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#discovery-and-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discovery and reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategies-and-backtests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategies and backtests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#account" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Account
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tickers-and-market-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tickers and market data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#macro-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Macro data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shaping-backtest-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shaping backtest responses
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#recommended-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1230,6 +1318,94 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#discovery-and-reference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Discovery and reference
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategies-and-backtests" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategies and backtests
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#account" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Account
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tickers-and-market-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tickers and market data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#macro-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Macro data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prompts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prompts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#resources" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Resources
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shaping-backtest-responses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Shaping backtest responses
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#recommended-flow" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1270,8 +1446,9 @@
 
 <h1 id="tools">Tools</h1>
 <p>The MCP server exposes the Backtest360 engine as the tools below. Ground every name and
-parameter in what the engine actually offers — discover with the catalog tools first,
-then validate before you run.</p>
+parameter in what the engine actually offers: discover with the catalog tools first,
+validate a strategy document next, and only then run it.</p>
+<h2 id="discovery-and-reference">Discovery and reference</h2>
 <table>
 <thead>
 <tr>
@@ -1286,16 +1463,31 @@ then validate before you run.</p>
 </tr>
 <tr>
 <td><code>get_catalog</code></td>
-<td>A reference catalog: operators, execution modes, stop types, sizing methods, bar frequencies, or the metric sections.</td>
+<td>A reference catalog — operators, execution modes, stop types, sizing methods, bar frequencies, or the metric sections.</td>
 </tr>
 <tr>
 <td><code>list_indicators</code></td>
 <td>List available indicators, or fetch one indicator's full parameter schema.</td>
 </tr>
 <tr>
+<td><code>list_templates</code></td>
+<td>List the built-in strategy templates, optionally filtered by name.</td>
+</tr>
+<tr>
 <td><code>get_strategy_schema</code></td>
 <td>The JSON Schema for a strategy document.</td>
 </tr>
+</tbody>
+</table>
+<h2 id="strategies-and-backtests">Strategies and backtests</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>validate_strategy</code></td>
 <td>Check a strategy document and return any errors to fix.</td>
@@ -1310,12 +1502,38 @@ then validate before you run.</p>
 </tr>
 <tr>
 <td><code>compare_backtests</code></td>
-<td>Run several strategies and compare them.</td>
+<td>Run several strategies and compare them side by side.</td>
 </tr>
 <tr>
 <td><code>compute_stats</code></td>
-<td>Compute performance statistics from a result.</td>
+<td>Compute performance statistics from returns.</td>
 </tr>
+</tbody>
+</table>
+<h2 id="account">Account</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_me</code></td>
+<td>The calling key's identity, plan, and limits.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="tickers-and-market-data">Tickers and market data</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
 <tr>
 <td><code>search_tickers</code></td>
 <td>Search the available tickers.</td>
@@ -1325,17 +1543,71 @@ then validate before you run.</p>
 <td>List available tickers, optionally by asset class.</td>
 </tr>
 <tr>
+<td><code>get_ticker_info</code></td>
+<td>Reference detail for a single symbol.</td>
+</tr>
+<tr>
 <td><code>get_data_range</code></td>
 <td>The available date range for a symbol and frequency.</td>
 </tr>
+<tr>
+<td><code>get_quote</code></td>
+<td>The latest quote for a symbol. <em>(Paid plans.)</em></td>
+</tr>
+<tr>
+<td><code>get_price_history</code></td>
+<td>Historical price bars for a symbol. <em>(Paid plans.)</em></td>
+</tr>
 </tbody>
 </table>
+<h2 id="macro-data">Macro data</h2>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>list_macro_series</code></td>
+<td>List the available macroeconomic series.</td>
+</tr>
+<tr>
+<td><code>get_macro_series</code></td>
+<td>Fetch observations for a macroeconomic series.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="prompts">Prompts</h2>
+<p>The server ships two prompts that package a multi-step workflow into a single request:</p>
+<ul>
+<li><code>build_and_validate</code> — draft a strategy document and validate it before running.</li>
+<li><code>robustness_review</code> — review a backtest for overfitting and fragility.</li>
+</ul>
+<h2 id="resources">Resources</h2>
+<p>Two resources expose reference data by URI:</p>
+<ul>
+<li><code>backtest360://catalog/{name}</code> — a named reference catalog.</li>
+<li><code>backtest360://schema/strategy</code> — the strategy document JSON Schema.</li>
+</ul>
+<h2 id="shaping-backtest-responses">Shaping backtest responses</h2>
+<p><code>run_backtest</code> and <code>compare_backtests</code> accept two arguments that control how much they
+return:</p>
+<ul>
+<li><code>response_detail</code> — <code>summary</code> (the default), <code>stats</code>, or <code>full</code>. Start with <code>summary</code>
+  and go deeper only when you need it.</li>
+<li><code>include</code> — additional sections to attach: <code>trades</code>, <code>equity_curve</code>, <code>monthly_returns</code>,
+  <code>yearly_returns</code>, <code>signal_diagnostics</code>.</li>
+</ul>
+<p>Requesting only what you need keeps responses small and fast.</p>
 <h2 id="recommended-flow">Recommended flow</h2>
 <ol>
 <li><code>engine_info</code> once to confirm the engine is reachable and which contract it serves.</li>
-<li><code>get_catalog</code> / <code>list_indicators</code> to ground names and parameters in what exists.</li>
+<li><code>get_catalog</code> / <code>list_indicators</code> / <code>list_templates</code> to ground names and parameters in
+   what exists.</li>
 <li><code>validate_strategy</code> until it passes.</li>
-<li><code>run_backtest</code> — start with a summary, go deeper only as needed.</li>
+<li><code>run_backtest</code> — start with a summary, request more detail only as needed.</li>
 </ol>
 <p>Your API key's plan governs permissions, rate limits, and data access.</p>
 <h2 id="next">Next</h2>

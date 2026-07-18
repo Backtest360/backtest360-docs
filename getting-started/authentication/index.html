@@ -570,10 +570,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pass-the-key-to-the-client" class="md-nav__link">
+  <a href="#configure-the-client" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pass the key to the client
+        Configure the client
       
     </span>
   </a>
@@ -581,10 +581,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-security" class="md-nav__link">
+  <a href="#keep-keys-out-of-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key security
+        Keep keys out of source
       
     </span>
   </a>
@@ -592,10 +592,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rate-limits" class="md-nav__link">
+  <a href="#rotate-a-key" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rate limits
+        Rotate a key
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication-errors-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication errors at a glance
       
     </span>
   </a>
@@ -1274,10 +1285,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#pass-the-key-to-the-client" class="md-nav__link">
+  <a href="#configure-the-client" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pass the key to the client
+        Configure the client
       
     </span>
   </a>
@@ -1285,10 +1296,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-security" class="md-nav__link">
+  <a href="#keep-keys-out-of-source" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key security
+        Keep keys out of source
       
     </span>
   </a>
@@ -1296,10 +1307,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rate-limits" class="md-nav__link">
+  <a href="#rotate-a-key" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Rate limits
+        Rotate a key
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#authentication-errors-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Authentication errors at a glance
       
     </span>
   </a>
@@ -1335,29 +1357,79 @@
 
 
 <h1 id="authentication">Authentication</h1>
-<p>Every request to the Backtest360 engine requires an <code>X-API-Key</code> header. The client handles this automatically once you supply the key.</p>
+<p>Every request to the engine is authenticated with an <code>X-API-Key</code> header. The Python client sets that header for you once you supply the key.</p>
 <h2 id="get-a-key">Get a key</h2>
-<p>Get a free key instantly at <a href="https://backtest360.com/api-access">backtest360.com/api-access</a> — submit your email and a key is issued on the spot and emailed to you; no approval needed. Keys have the format:</p>
-<pre><code>b360_&lt;43 random characters&gt;
+<p>Create a free account at <a href="https://backtest360.com/sign-up">backtest360.com/sign-up</a>. A free-tier API key is provisioned with the account — no separate application step. Keys have the format:</p>
+<pre><code>b360_&lt;random characters&gt;
 </code></pre>
-<h2 id="pass-the-key-to-the-client">Pass the key to the client</h2>
-<p><strong>Option 1 — kwarg (simplest):</strong></p>
-<pre><code class="language-python">from backtest360 import Client
-client = Client(api_key=&quot;b360_...&quot;)
-</code></pre>
-<p><strong>Option 2 — environment variable (recommended for scripts and CI):</strong></p>
+<p>Signed-in users manage their keys under <strong>account settings → API keys</strong>: view the active key, and re-issue it when needed.</p>
+<h2 id="configure-the-client">Configure the client</h2>
+<p>The client reads its key from the <code>BACKTEST360_API_KEY</code> environment variable by default, which keeps the secret out of your source. This is the recommended path for scripts, notebooks, and CI.</p>
 <pre><code class="language-bash">export BACKTEST360_API_KEY=&quot;b360_...&quot;
 </code></pre>
-<pre><code class="language-python">client = Client()  # reads BACKTEST360_API_KEY automatically
+<pre><code class="language-python">from backtest360 import Client
+
+client = Client()  # reads BACKTEST360_API_KEY
 </code></pre>
-<h2 id="key-security">Key security</h2>
+<p>You can also pass the key explicitly — useful when a process manages several keys — but read it from your own configuration or a secrets manager rather than hardcoding a literal:</p>
+<pre><code class="language-python">import os
+from backtest360 import Client
+
+client = Client(api_key=os.environ[&quot;BACKTEST360_API_KEY&quot;])
+</code></pre>
+<p>To target a non-default engine, set <code>BACKTEST360_ENGINE_URL</code> or pass <code>base_url=</code>. The default is <code>https://api.backtest360.com</code>.</p>
+<h2 id="keep-keys-out-of-source">Keep keys out of source</h2>
 <ul>
-<li>Never commit API keys to source control.</li>
-<li>Store production keys in an environment variable or secrets manager.</li>
-<li>Rotate a key by re-submitting the same email at <a href="https://backtest360.com/api-access">backtest360.com/api-access</a> — a new key is issued and the previous one is revoked.</li>
+<li>Never commit an API key. Read it from an environment variable or a secrets manager at the point of use.</li>
+<li>Never paste a key into a notebook you will share, a log line, or an error report.</li>
+<li>Treat a key like a password: anyone holding it can run backtests billed to your account.</li>
 </ul>
-<h2 id="rate-limits">Rate limits</h2>
-<p>Each key carries per-minute (rpm) and per-day (rpd) request limits. The engine returns <code>429 RATE_LIMIT_EXCEEDED</code> when a limit is hit.</p>
+<h2 id="rotate-a-key">Rotate a key</h2>
+<p>Re-issue the key from <strong>account settings → API keys</strong>. Rotation is zero-gap: the engine mints the new key first and then revokes the old one, so a running process is never left without a valid credential mid-rotation. At steady state there is one active key per purpose. Update <code>BACKTEST360_API_KEY</code> (or your secrets manager) with the new value, then restart anything holding the old one.</p>
+<h2 id="authentication-errors-at-a-glance">Authentication errors at a glance</h2>
+<p>When a key is missing or not accepted, the engine returns a <code>401</code> or <code>403</code> with a specific code:</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Status</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTH_MISSING</code></td>
+<td>401</td>
+<td>No <code>X-API-Key</code> header was sent.</td>
+</tr>
+<tr>
+<td><code>AUTH_INVALID</code></td>
+<td>401</td>
+<td>The key is unknown or has been revoked.</td>
+</tr>
+<tr>
+<td><code>AUTH_EXPIRED</code></td>
+<td>401</td>
+<td>The key has expired.</td>
+</tr>
+<tr>
+<td><code>TENANT_SUSPENDED</code></td>
+<td>403</td>
+<td>The account is suspended.</td>
+</tr>
+<tr>
+<td><code>SCOPE_DENIED</code></td>
+<td>403</td>
+<td>The key lacks a scope the request requires.</td>
+</tr>
+<tr>
+<td><code>PLAN_UPGRADE_REQUIRED</code></td>
+<td>403</td>
+<td>The request uses a paid-only feature on a free key.</td>
+</tr>
+</tbody>
+</table>
+<p>Rate and quota limits surface separately as <code>429</code> responses (<code>QUOTA_EXCEEDED</code> for your key's per-minute and per-day request limits, with a <code>Retry-After</code> header). The client raises every one of these as a <code>Backtest360Error</code> carrying the <code>code</code> and HTTP <code>status</code>. See <a href="../../how-to/handle-errors/">Handle errors</a> for the full catalog and handling patterns.</p>
 <h2 id="next">Next</h2>
 <p><a href="../first-backtest/">Run your first backtest →</a></p>
 

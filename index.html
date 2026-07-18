@@ -478,6 +478,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#core-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core concepts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#need-help" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1280,6 +1291,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#core-concepts" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Core concepts
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#need-help" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1308,42 +1330,46 @@
 
 
 <h1 id="backtest360">Backtest360</h1>
-<p><strong>Backtest your trading strategy in minutes. Institutional grade.</strong></p>
-<p>Backtest360 provides a cloud-based backtesting engine with a clean Python client, a REST API, and an MCP server. Plug in your OHLCV data, define a strategy with plain boolean expressions, and get a full performance report in seconds.</p>
+<p>Backtest360 is a rigour-first backtesting engine with a typed API. You describe a strategy as signals and execution rules, the engine runs it over historical price data, and you get a full performance report — returns, risk, trade-level detail, and benchmark-relative metrics — computed server-side with a strict no-look-ahead discipline.</p>
+<p>The engine is deliberately conservative about the things that make backtests lie: signals are lagged one bar before they can fill, costs and slippage are modelled explicitly, and every run reports the data-quality issues it found. The result is a number you can defend.</p>
 <h2 id="three-ways-in-one-api-key">Three ways in, one API key</h2>
-<p>The same API key works across every interface:</p>
+<p>The same engine sits behind three interfaces, and one API key works across all of them.</p>
 <ul>
-<li><strong>Python client</strong> — <code>pip install backtest360</code>; drive the engine from scripts and notebooks. <em>(These docs.)</em></li>
-<li><strong>REST API</strong> — call <code>https://api.backtest360.com</code> directly from any language with an <code>X-API-Key</code> header. See the <a href="api-reference/">API Reference</a>.</li>
-<li><strong>AI assistants (MCP)</strong> — point any MCP-compatible assistant at our hosted MCP server and run backtests in conversation, no install. See <a href="mcp/connect/">Connect over MCP</a>.</li>
+<li><strong>Python client</strong> — <code>pip install backtest360</code>. A typed client for scripts and notebooks. These docs cover it in full.</li>
+<li><strong>REST API</strong> — call <code>https://api.backtest360.com</code> from any language with an <code>X-API-Key</code> header. See the <a href="api-reference/">API Reference</a>.</li>
+<li><strong>AI assistants (MCP)</strong> — point any MCP-compatible assistant at the hosted MCP server and run backtests in conversation, no install required. See <a href="mcp/connect/">Connect over MCP</a>.</li>
 </ul>
-<p>Get a key at <a href="https://backtest360.com">backtest360.com</a>.</p>
+<p>Create a free account at <a href="https://backtest360.com/sign-up">backtest360.com/sign-up</a>; a free-tier API key comes with the account. See <a href="getting-started/authentication/">Authentication</a> for how to configure and rotate it.</p>
 <h2 id="quick-example">Quick example</h2>
-<pre><code class="language-python">import yfinance as yf
-from backtest360 import Client, Strategy
+<p>This runs end to end with nothing but the client and a key — the engine serves a small set of bundled sample datasets, so no external data feed is needed.</p>
+<pre><code class="language-python">from backtest360 import Client, Strategy
 
-df = yf.download(&quot;BTC-USD&quot;, period=&quot;3y&quot;, interval=&quot;1d&quot;,
-    auto_adjust=False, multi_level_index=False, progress=False)
-df.columns = df.columns.str.lower()
+client = Client()  # reads BACKTEST360_API_KEY from the environment
 
-result = Client(api_key=&quot;b360_...&quot;).backtest(
-    Strategy.rsi_threshold_long(), df
-)
-print(result.stats[&quot;Sharpe&quot;])
-result.strategy_equity.plot(title=&quot;Equity curve&quot;)
+df = client.sample_data(&quot;BTC&quot;)                      # bundled daily OHLCV
+result = client.backtest(Strategy.rsi_threshold_long(), df)
+
+print(result.stats[&quot;sharpe&quot;])       # e.g. 1.42
+print(result.stats[&quot;max_drawdown&quot;]) # e.g. -0.42
+result.summary()                    # compact human-readable report
 </code></pre>
+<p>Statistics are keyed by stable metric id (<code>sharpe</code>, <code>max_drawdown</code>, <code>cagr</code>, …). See <a href="concepts/result-anatomy/">Result Anatomy</a> for the full shape of a result.</p>
 <h2 id="where-to-start">Where to start</h2>
 <ul>
-<li><strong><a href="getting-started/install/">Installation</a></strong> — <code>pip install backtest360</code></li>
-<li><strong><a href="getting-started/authentication/">Authentication</a></strong> — get and use your API key</li>
-<li><strong><a href="getting-started/first-backtest/">Your first backtest</a></strong> — end-to-end walkthrough</li>
-<li><strong><a href="client-reference/client/">Client Reference</a></strong> — full <code>Client</code>, <code>Strategy</code>, and helper class docs</li>
-<li><strong><a href="api-reference/">API Reference</a></strong> — interactive REST API browser</li>
+<li><strong><a href="getting-started/install/">Installation</a></strong> — install the client and verify it.</li>
+<li><strong><a href="getting-started/authentication/">Authentication</a></strong> — get, configure, and rotate your API key.</li>
+<li><strong><a href="getting-started/first-backtest/">Your first backtest</a></strong> — an end-to-end walkthrough.</li>
+<li><strong><a href="client-reference/client/">Client Reference</a></strong> — the full <code>Client</code>, <code>Strategy</code>, and <code>Result</code> API.</li>
+<li><strong><a href="api-reference/">API Reference</a></strong> — the interactive REST browser.</li>
+</ul>
+<h2 id="core-concepts">Core concepts</h2>
+<ul>
+<li><strong><a href="concepts/strategy-shape/">Strategy shape</a></strong> — how a strategy document is put together.</li>
+<li><strong><a href="concepts/signal-vs-execution/">Signal vs execution</a></strong> — how a signal becomes a fill, and the lag-1 rule.</li>
+<li><strong><a href="concepts/result-anatomy/">Result anatomy</a></strong> — every field on a <code>Result</code>, and how the metrics are keyed.</li>
 </ul>
 <h2 id="need-help">Need help?</h2>
-<p>Questions or feedback? Email us at <a href="mailto:hello@backtest360.com">hello@backtest360.com</a>
-— we read everything.</p>
-<p>Found a bug, or want a feature? <a href="https://github.com/Backtest360/backtest360/issues">Open an issue on GitHub</a>.</p>
+<p>Questions or feedback? Email <a href="mailto:hello@backtest360.com">hello@backtest360.com</a>. Found a bug or want a feature? <a href="https://github.com/Backtest360/backtest360/issues">Open an issue on GitHub</a>.</p>
 
 
 

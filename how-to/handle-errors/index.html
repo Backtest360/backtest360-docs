@@ -1138,10 +1138,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pattern" class="md-nav__link">
+  <a href="#the-exception" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pattern
+        The exception
       
     </span>
   </a>
@@ -1149,10 +1149,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#common-codes" class="md-nav__link">
+  <a href="#branch-on-the-code" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common codes
+        Branch on the code
       
     </span>
   </a>
@@ -1160,10 +1160,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#retrying-on-429" class="md-nav__link">
+  <a href="#what-is-worth-retrying" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Retrying on 429
+        What is worth retrying
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-retry-helper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A retry helper
       
     </span>
   </a>
@@ -1241,10 +1252,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#pattern" class="md-nav__link">
+  <a href="#the-exception" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Pattern
+        The exception
       
     </span>
   </a>
@@ -1252,10 +1263,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#common-codes" class="md-nav__link">
+  <a href="#branch-on-the-code" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common codes
+        Branch on the code
       
     </span>
   </a>
@@ -1263,10 +1274,21 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#retrying-on-429" class="md-nav__link">
+  <a href="#what-is-worth-retrying" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Retrying on 429
+        What is worth retrying
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#a-retry-helper" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        A retry helper
       
     </span>
   </a>
@@ -1291,37 +1313,119 @@
 
 
 <h1 id="handle-errors">Handle Errors</h1>
-<p>All client errors raise <code>Backtest360Error</code>. The <code>status</code> and <code>code</code> attributes tell you what went wrong.</p>
-<h2 id="pattern">Pattern</h2>
+<p>Every failure the client can raise is a <code>Backtest360Error</code>. There is one exception type;
+you distinguish causes by inspecting its fields rather than catching different classes.</p>
+<h2 id="the-exception">The exception</h2>
+<p><code>Backtest360Error</code> carries five fields:</p>
+<ul>
+<li><code>status</code> — the HTTP status from the engine, or <code>0</code> for errors the client raises before
+  a request is sent.</li>
+<li><code>code</code> — a stable machine-readable string. Branch on this.</li>
+<li><code>body</code> — the engine's response body, when present. For strategy validation it holds the
+  structured error report.</li>
+<li><code>request_id</code> — correlates the failure with an engine-side log entry. Include it when
+  reporting a problem.</li>
+<li><code>retry_after</code> — seconds to wait before retrying, set on throttling responses.</li>
+</ul>
+<p>The full code tables are in the <a href="../../client-reference/exceptions/">Exceptions reference</a>.</p>
+<h2 id="branch-on-the-code">Branch on the code</h2>
 <pre><code class="language-python">from backtest360 import Client, Backtest360Error
 
+client = Client()
+
 try:
-    result = client.backtest(strategy, df)
+    result = client.backtest(strategy, df, risk=risk)
 except Backtest360Error as e:
-    if e.status == 401:
-        print(&quot;Authentication failed:&quot;, e.code)
+    if e.code in (&quot;AUTH_MISSING&quot;, &quot;AUTH_INVALID&quot;, &quot;AUTH_EXPIRED&quot;):
+        print(&quot;Check your API key:&quot;, e.code)
     elif e.status == 422:
-        print(&quot;Strategy is invalid:&quot;, e.body)
-    elif e.status == 429:
-        print(&quot;Rate limited — retry after a moment&quot;)
+        # Strategy validation — e.body holds the structured error list.
+        for err in e.body[&quot;errors&quot;]:
+            print(f&quot;{err['location']}: {err['message']}&quot;)
     else:
         raise
 </code></pre>
-<h2 id="common-codes">Common codes</h2>
-<p>See <a href="../../client-reference/exceptions/">Exceptions reference</a> for the full list.</p>
-<h2 id="retrying-on-429">Retrying on 429</h2>
+<p>Prefer <code>code</code> over <code>status</code> where you can. A <code>429</code>, for example, covers three distinct
+conditions — a quota (<code>QUOTA_EXCEEDED</code>), too many concurrent requests
+(<code>CONCURRENCY_EXCEEDED</code>), and an upstream provider throttle (<code>RATE_LIMITED</code>) — and only
+the first carries a <code>retry_after</code>.</p>
+<h2 id="what-is-worth-retrying">What is worth retrying</h2>
+<p>Retry only transient, server-side conditions. Client and validation errors will not
+succeed on a second identical attempt.</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Retry?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>QUOTA_EXCEEDED</code></td>
+<td>Yes</td>
+<td>Wait for <code>retry_after</code> before retrying.</td>
+</tr>
+<tr>
+<td><code>ENGINE_BUSY</code></td>
+<td>Yes</td>
+<td>Compute capacity was exhausted; back off and retry.</td>
+</tr>
+<tr>
+<td><code>COMPUTE_TIMEOUT</code></td>
+<td>Yes</td>
+<td>The run exceeded the engine's compute window; retry, and consider a smaller request.</td>
+</tr>
+<tr>
+<td><code>PROVIDER_UNAVAILABLE</code></td>
+<td>Yes</td>
+<td>A data provider was unavailable; back off and retry.</td>
+</tr>
+<tr>
+<td><code>AUTH_MISSING</code>, <code>AUTH_INVALID</code>, <code>AUTH_EXPIRED</code></td>
+<td>No</td>
+<td>Fix the key.</td>
+</tr>
+<tr>
+<td><code>INVALID_PARAMETERS</code>, <code>INVALID_SYMBOL</code>, <code>INVALID_LEG_COUNT</code></td>
+<td>No</td>
+<td>Fix the request.</td>
+</tr>
+<tr>
+<td><code>PLAN_UPGRADE_REQUIRED</code>, <code>SCOPE_DENIED</code></td>
+<td>No</td>
+<td>The key is not entitled to the operation.</td>
+</tr>
+<tr>
+<td><code>CLIENT_*</code></td>
+<td>No</td>
+<td>The client rejected the input before sending it.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="a-retry-helper">A retry helper</h2>
+<p>Honor <code>retry_after</code> when the engine sets it, and fall back to exponential backoff
+otherwise.</p>
 <pre><code class="language-python">import time
+from backtest360 import Backtest360Error
 
-for attempt in range(3):
-    try:
-        result = client.backtest(strategy, df)
-        break
-    except Backtest360Error as e:
-        if e.status == 429 and attempt &lt; 2:
-            time.sleep(2 ** attempt)
-        else:
-            raise
+RETRYABLE = {&quot;QUOTA_EXCEEDED&quot;, &quot;ENGINE_BUSY&quot;, &quot;COMPUTE_TIMEOUT&quot;, &quot;PROVIDER_UNAVAILABLE&quot;}
+
+def with_retry(call, *, attempts=3):
+    for attempt in range(attempts):
+        try:
+            return call()
+        except Backtest360Error as e:
+            if e.code not in RETRYABLE or attempt == attempts - 1:
+                raise
+            delay = e.retry_after if e.retry_after is not None else 2 ** attempt
+            time.sleep(delay)
+
+result = with_retry(lambda: client.backtest(strategy, df, risk=risk))
 </code></pre>
+<p>!!! note
+    Retries multiply your quota usage. Cap the attempt count and always respect
+    <code>retry_after</code> so you do not compound a throttle.</p>
 
 
 

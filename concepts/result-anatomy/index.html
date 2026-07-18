@@ -743,13 +743,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-stats" class="md-nav__link">
+  <a href="#how-stats-are-keyed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key stats
+        How stats are keyed
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="How stats are keyed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#benchmark-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmark metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-full-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The full catalog
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -765,10 +804,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#accessing-all-metrics" class="md-nav__link">
+  <a href="#markers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Accessing all metrics
+        Markers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data quality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See also
       
     </span>
   </a>
@@ -1263,13 +1324,52 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-stats" class="md-nav__link">
+  <a href="#how-stats-are-keyed" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Key stats
+        How stats are keyed
       
     </span>
   </a>
+  
+    <nav class="md-nav" aria-label="How stats are keyed">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#common-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Common metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#benchmark-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmark metrics
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#the-full-catalog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The full catalog
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1285,10 +1385,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#accessing-all-metrics" class="md-nav__link">
+  <a href="#markers" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Accessing all metrics
+        Markers
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#data-quality" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Data quality
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See also
       
     </span>
   </a>
@@ -1313,7 +1435,7 @@
 
 
 <h1 id="result-anatomy">Result Anatomy</h1>
-<p><code>client.backtest()</code> returns a <code>Result</code> object wrapping the full engine response.</p>
+<p><code>client.backtest()</code> and <code>client.backtest_signals()</code> return a <code>Result</code> — a thin wrapper over the engine response that exposes the pieces you need as pandas and Python objects.</p>
 <h2 id="properties">Properties</h2>
 <table>
 <thead>
@@ -1327,81 +1449,185 @@
 <tr>
 <td><code>result.stats</code></td>
 <td><code>dict</code></td>
-<td>120+ performance metrics</td>
+<td>Performance metrics, keyed by metric id (see below).</td>
 </tr>
 <tr>
 <td><code>result.trades</code></td>
 <td><code>list[dict]</code></td>
-<td>Full trade log</td>
+<td>The full trade log.</td>
 </tr>
 <tr>
 <td><code>result.strategy_equity</code></td>
 <td><code>pd.Series</code></td>
-<td>Strategy equity curve, datetime-indexed</td>
+<td>Strategy equity curve, datetime-indexed.</td>
 </tr>
 <tr>
 <td><code>result.benchmark_equity</code></td>
 <td><code>pd.Series</code></td>
-<td>Benchmark equity curve (empty when no benchmark supplied)</td>
+<td>Benchmark equity curve; empty <code>Series</code> when no benchmark was supplied.</td>
 </tr>
 <tr>
 <td><code>result.returns</code></td>
 <td><code>pd.Series</code></td>
-<td>Net-of-cost log-return series</td>
+<td>Net-of-cost log-return series.</td>
 </tr>
 <tr>
 <td><code>result.signals</code></td>
 <td><code>pd.Series</code></td>
-<td>Signal series <code>{-1, 0, 1}</code></td>
+<td>Signal series with values in <code>{-1, 0, 1}</code>.</td>
 </tr>
 <tr>
 <td><code>result.markers</code></td>
 <td><code>dict</code></td>
-<td>Per-bar event markers (entries, exits, stop hits); empty when not applicable</td>
+<td>Warmup boundary and first/last trade positions (see below).</td>
 </tr>
 <tr>
 <td><code>result.data_quality</code></td>
 <td><code>dict</code></td>
-<td>The engine's assessment of the input data quality</td>
+<td>The engine's assessment of the input data.</td>
 </tr>
 <tr>
 <td><code>result.raw</code></td>
 <td><code>dict</code></td>
-<td>Full engine response dict</td>
+<td>The full engine response, for any field not exposed above.</td>
 </tr>
 </tbody>
 </table>
-<p><code>result.summary()</code> is a convenience <strong>method</strong> (not a property) that prints a compact, human-readable performance summary to stdout.</p>
-<h2 id="key-stats">Key stats</h2>
-<pre><code class="language-python"># Return metrics
-result.stats[&quot;CAGR&quot;]              # Compound annual growth rate
-result.stats[&quot;Total Return&quot;]      # Gross return over the period
-result.stats[&quot;Sharpe&quot;]            # Annualised Sharpe ratio
-result.stats[&quot;Sortino&quot;]           # Sortino ratio (downside deviation)
-result.stats[&quot;Calmar&quot;]            # CAGR / Max Drawdown
-
-# Risk metrics
-result.stats[&quot;Max Drawdown&quot;]      # Worst peak-to-trough drawdown
-result.stats[&quot;Vol (Ann)&quot;]         # Annualised return volatility
-
-# Trade metrics
-result.stats[&quot;Trade Win Rate&quot;]    # Fraction of winning trades
-result.stats[&quot;Profit Factor&quot;]     # Gross profit / gross loss
-result.stats[&quot;Avg Trade P&amp;L&quot;]     # Average net trade return
-
-# Benchmark metrics (when benchmark supplied)
-result.stats[&quot;Alpha&quot;]             # Jensen's Alpha (log-space)
-result.stats[&quot;Beta&quot;]              # Market beta
-result.stats[&quot;Up Capture&quot;]        # Up-market capture ratio (Morningstar)
-result.stats[&quot;Down Capture&quot;]      # Down-market capture ratio
-result.stats[&quot;Information Ratio&quot;] # Active return / tracking error
+<p><code>result.summary()</code> is a <strong>method</strong>, not a property. It prints a compact overview — Total Return, Annualized Return, Annualized Std Dev, and Sharpe — to stdout and returns <code>None</code>:</p>
+<pre><code class="language-python">result.summary()
+# Performance Summary
+# ─────────────────────────────
+# Total Return           8.3%
+# Annualized Return     12.1%
+# Annualized Std Dev    18.4%
+# Sharpe Ratio           1.42
+</code></pre>
+<h2 id="how-stats-are-keyed">How stats are keyed</h2>
+<p>By default <code>result.stats</code> is keyed by stable <strong>metric id</strong> — snake_case strings that do not change between releases. This is what every example in these docs uses:</p>
+<pre><code class="language-python">result.stats[&quot;sharpe&quot;]         # 1.42
+result.stats[&quot;max_drawdown&quot;]   # -0.42
+</code></pre>
+<p>Pass <code>stats_keys="labels"</code> to the request method to key by human-readable display label instead (<code>result.stats["Sharpe"]</code>). Prefer ids in code — labels can change; ids are the contract.</p>
+<h3 id="common-metrics">Common metrics</h3>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>label</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>total_return</code></td>
+<td>Total Return</td>
+<td>Cumulative return over the period.</td>
+</tr>
+<tr>
+<td><code>cagr</code></td>
+<td>CAGR</td>
+<td>Compound annual growth rate.</td>
+</tr>
+<tr>
+<td><code>vol_ann</code></td>
+<td>Vol (Ann)</td>
+<td>Annualized return volatility.</td>
+</tr>
+<tr>
+<td><code>sharpe</code></td>
+<td>Sharpe</td>
+<td>Annualized Sharpe ratio.</td>
+</tr>
+<tr>
+<td><code>sortino</code></td>
+<td>Sortino</td>
+<td>Sortino ratio (downside deviation).</td>
+</tr>
+<tr>
+<td><code>calmar</code></td>
+<td>Calmar</td>
+<td>CAGR divided by max drawdown.</td>
+</tr>
+<tr>
+<td><code>max_drawdown</code></td>
+<td>Max Drawdown</td>
+<td>Worst peak-to-trough drawdown.</td>
+</tr>
+<tr>
+<td><code>win_rate</code></td>
+<td>Win Rate</td>
+<td>Fraction of <strong>positive days</strong>.</td>
+</tr>
+<tr>
+<td><code>profit_factor</code></td>
+<td>Profit Factor</td>
+<td>Gross profit divided by gross loss (trade-based).</td>
+</tr>
+<tr>
+<td><code>avg_trade_pnl</code></td>
+<td>Avg Trade P&amp;L</td>
+<td>Average net trade return.</td>
+</tr>
+</tbody>
+</table>
+<p><code>total_return</code> is a real metric id in <code>result.stats</code>, distinct from the Total Return line that <code>summary()</code> derives from the equity curve.</p>
+<p>!!! warning "<code>win_rate</code> is not the trade win rate"
+    <code>win_rate</code> measures the fraction of <strong>positive days</strong>. For the fraction of <strong>winning trades</strong>, use <code>trade_win_rate</code>. (A related <code>signal_win_rate</code> exists for signal-level analysis.) Reach for the one your question actually means — they routinely differ.</p>
+<h3 id="benchmark-metrics">Benchmark metrics</h3>
+<p>When you pass a <code>benchmark</code>, the engine computes benchmark-relative metrics and the client surfaces them on <code>result.relative</code> — a dict keyed the same way as <code>result.stats</code> (they are deliberately not mixed into <code>result.stats</code>).</p>
+<table>
+<thead>
+<tr>
+<th>id</th>
+<th>label</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>alpha</code></td>
+<td>Alpha</td>
+</tr>
+<tr>
+<td><code>beta</code></td>
+<td>Beta</td>
+</tr>
+<tr>
+<td><code>information_ratio</code></td>
+<td>Information Ratio</td>
+</tr>
+<tr>
+<td><code>tracking_error</code></td>
+<td>Tracking Error</td>
+</tr>
+<tr>
+<td><code>up_capture</code></td>
+<td>Up Capture</td>
+</tr>
+<tr>
+<td><code>down_capture</code></td>
+<td>Down Capture</td>
+</tr>
+<tr>
+<td><code>capture_ratio</code></td>
+<td>Capture Ratio</td>
+</tr>
+</tbody>
+</table>
+<pre><code class="language-python">result = client.backtest(strategy, df, benchmark=spy)
+print(result.relative[&quot;alpha&quot;], result.relative[&quot;beta&quot;])
+</code></pre>
+<p><code>result.relative</code> is an empty dict when no benchmark was supplied.</p>
+<h3 id="the-full-catalog">The full catalog</h3>
+<p><code>result.stats</code> carries the headline metric set available to your plan (roughly two dozen on the free tier). The engine's complete catalog — every id, its label, and a description — is served by <code>GET /api/sections</code>. Do not assume a fixed count in code; iterate over what the run returned:</p>
+<pre><code class="language-python">for metric_id, value in sorted(result.stats.items()):
+    print(f&quot;{metric_id:24s} {value}&quot;)
 </code></pre>
 <h2 id="trade-log-fields">Trade log fields</h2>
-<p>Each entry in <code>result.trades</code>:</p>
+<p>Each entry in <code>result.trades</code> is a dict:</p>
 <pre><code class="language-python">{
     &quot;entry_date&quot;:    &quot;2023-01-15&quot;,
     &quot;exit_date&quot;:     &quot;2023-02-03&quot;,
-    &quot;direction&quot;:     1,             # 1=long, -1=short
+    &quot;direction&quot;:     1,             # 1 = long, -1 = short
     &quot;entry_price&quot;:   16800.0,
     &quot;exit_price&quot;:    23400.0,
     &quot;return_gross&quot;:  0.0392,
@@ -1412,11 +1638,42 @@ result.stats[&quot;Information Ratio&quot;] # Active return / tracking error
     &quot;stop_hit&quot;:      False,
 }
 </code></pre>
-<h2 id="accessing-all-metrics">Accessing all metrics</h2>
-<pre><code class="language-python">for name, value in sorted(result.stats.items()):
-    print(f&quot;{name:30s} {value}&quot;)
-</code></pre>
-<p>See <a href="../../client-reference/client/">Client Reference</a> for the full <code>Result</code> API.</p>
+<h2 id="markers">Markers</h2>
+<p><code>result.markers</code> marks the run's boundaries for chart annotation. It is <strong>not</strong> a per-bar event stream — it reports the warmup boundary and the first/last trade positions:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>warmup_bars</code></td>
+<td>Bars consumed before the strategy could trade.</td>
+</tr>
+<tr>
+<td><code>warmup_end_index</code> / <code>warmup_end_date</code></td>
+<td>Where the warmup period ends.</td>
+</tr>
+<tr>
+<td><code>first_trade_index</code> / <code>first_trade_date</code></td>
+<td>The first trade's entry.</td>
+</tr>
+<tr>
+<td><code>last_trade_exit_index</code> / <code>last_trade_exit_date</code></td>
+<td>The last trade's exit.</td>
+</tr>
+</tbody>
+</table>
+<p>Individual fields are <code>None</code> when they do not apply (for example, the trade fields on a run that never traded), and <code>markers</code> is an empty dict when the engine response carries none.</p>
+<h2 id="data-quality">Data quality</h2>
+<p><code>result.data_quality</code> reports issues the engine found while preparing the run — bad prices, missing bars, and warnings. It is an empty dict when the response carries no data-quality block. Inspect it when results look surprising; a gap in the input often explains a gap in the output.</p>
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="../../client-reference/client/">Client Reference</a> — the full <code>Result</code> API.</li>
+<li><a href="../../getting-started/first-backtest/">Your first backtest</a> — a <code>Result</code> read end to end.</li>
+</ul>
 
 
 

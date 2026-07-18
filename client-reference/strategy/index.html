@@ -1703,6 +1703,11 @@
 
 
 <h1 id="strategy">Strategy</h1>
+<p><code>Strategy</code> builds the strategy document the engine runs. Start from a template — for
+example <code>Strategy.rsi_threshold_long()</code> or <code>Strategy.ma_crossover()</code> — or compose one
+from indicators with <code>Strategy.indicator(...)</code>. The configuration dataclasses below
+(<code>Execution</code>, <code>Costs</code>, <code>Risk</code>, <code>Sizing</code>) tune how a strategy is executed and are passed
+to <code>Client.backtest()</code> as keyword arguments.</p>
 
 
 <div class="doc doc-object doc-class">
@@ -2120,7 +2125,7 @@ Strategy.indicator(
 <p>result = Client(api_key="...").backtest(
 ...     Strategy.rsi_threshold_long(), df
 ... )
-print(result.stats["Sharpe"])</p>
+print(result.stats["sharpe"])</p>
 </blockquote>
 </blockquote>
 </blockquote>
@@ -2193,7 +2198,7 @@ RSI returns to neutral (&gt;= 50). Shorter hold and tighter exit than
 <p>result = Client(api_key="...").backtest(
 ...     Strategy.rsi_mean_reversion(), df
 ... )
-print(result.stats["Sharpe"])</p>
+print(result.stats["sharpe"])</p>
 </blockquote>
 </blockquote>
 </blockquote>
@@ -2263,7 +2268,7 @@ print(result.stats["Sharpe"])</p>
 <p>result = Client(api_key="...").backtest(
 ...     Strategy.ma_crossover(), df
 ... )
-print(result.stats["Sharpe"])</p>
+print(result.stats["sharpe"])</p>
 </blockquote>
 </blockquote>
 </blockquote>
@@ -2333,7 +2338,7 @@ print(result.stats["Sharpe"])</p>
 <p>result = Client(api_key="...").backtest(
 ...     Strategy.momentum_6m_long(), df
 ... )
-print(result.stats["Sharpe"])</p>
+print(result.stats["sharpe"])</p>
 </blockquote>
 </blockquote>
 </blockquote>

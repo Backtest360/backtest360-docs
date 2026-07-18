@@ -769,6 +769,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See also
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1339,6 +1350,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#see-also" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        See also
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1357,19 +1379,19 @@
 
 
 <h1 id="signal-vs-execution">Signal vs Execution</h1>
-<p>The engine separates <em>when a signal fires</em> from <em>how that signal is filled</em>.</p>
+<p>The engine separates two questions that backtests often conflate: <em>when a signal fires</em> and <em>how that signal is filled</em>. Your strategy document decides the first; an <code>Execution</code> config decides the second.</p>
 <h2 id="signal-frequency">Signal frequency</h2>
 <p><code>signal_frequency</code> controls how often the engine re-evaluates your condition expressions:</p>
 <ul>
-<li><code>"daily"</code> — conditions evaluated once per day (most common)</li>
-<li><code>"hourly"</code>, <code>"4h"</code>, <code>"weekly"</code> — other bar resolutions</li>
+<li><code>"daily"</code> — evaluated once per day (the default, and most common).</li>
+<li><code>"hourly"</code>, <code>"4h"</code>, <code>"weekly"</code> — other bar resolutions.</li>
 </ul>
 <pre><code class="language-python">from backtest360 import Execution
 
 Execution(signal_frequency=&quot;daily&quot;)
 </code></pre>
 <h2 id="entry-and-exit-anchors">Entry and exit anchors</h2>
-<p><code>entry</code> and <code>exit</code> control which price is used to fill:</p>
+<p><code>entry</code> and <code>exit</code> set which price a fill uses:</p>
 <table>
 <thead>
 <tr>
@@ -1380,25 +1402,25 @@ Execution(signal_frequency=&quot;daily&quot;)
 <tbody>
 <tr>
 <td><code>"open"</code></td>
-<td>Fill at the next bar's open (default for entry)</td>
+<td>Fill at the next bar's open (the default for entry).</td>
 </tr>
 <tr>
 <td><code>"close"</code></td>
-<td>Fill at the current bar's close (default for exit)</td>
+<td>Fill at the current bar's close (the default for exit).</td>
 </tr>
 <tr>
 <td><code>"vwap"</code></td>
-<td>Fill at VWAP when available</td>
+<td>Fill at VWAP, when available.</td>
 </tr>
 </tbody>
 </table>
-<p>A <code>signal=1</code> at bar D's close means: look for a fill on bar D+1 at the entry anchor price.</p>
+<p>A <code>signal = 1</code> at bar D's close means: look for a fill on bar D+1 at the entry anchor price.</p>
 <h2 id="the-lag-1-rule">The lag-1 rule</h2>
-<p>The engine enforces a strict no-look-ahead rule: any value informing a decision at bar D uses only data through <code>close[D-1]</code>. Signals are shifted one bar before the fill loop runs. This prevents the most common form of backtest optimism.</p>
+<p>The engine enforces a strict no-look-ahead discipline: any value informing a decision at bar D uses only data through <code>close[D-1]</code>. Signals are shifted one bar before the fill loop runs. This closes off the most common source of backtest optimism — acting on information the strategy could not yet have had.</p>
 <h2 id="example-open-to-close-daily">Example: open-to-close daily</h2>
 <pre><code class="language-python">from backtest360 import Client, Strategy, Execution
 
-result = Client(api_key=&quot;b360_...&quot;).backtest(
+result = Client().backtest(
     Strategy.rsi_threshold_long(), df,
     execution=Execution(
         signal_frequency=&quot;daily&quot;,
@@ -1408,35 +1430,40 @@ result = Client(api_key=&quot;b360_...&quot;).backtest(
 )
 </code></pre>
 <h2 id="fill-model">Fill model</h2>
-<p><code>entry_fill</code> and <code>exit_fill</code> control how the fill price is simulated within the bar (each defaults to <code>"exact"</code>):</p>
+<p><code>entry_fill</code> and <code>exit_fill</code> control how the fill price is drawn from within the bar. Each defaults to <code>"exact"</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Value</th>
-<th>Behaviour</th>
+<th>Behavior</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>"exact"</code></td>
-<td>Exactly at the anchor price (default)</td>
+<td>Exactly at the anchor price (default).</td>
 </tr>
 <tr>
 <td><code>"worst"</code></td>
-<td>Worst price in the bar (high for longs, low for shorts)</td>
+<td>The worst price in the bar — high for longs, low for shorts.</td>
 </tr>
 <tr>
 <td><code>"best"</code></td>
-<td>Best price in the bar</td>
+<td>The best price in the bar.</td>
 </tr>
 <tr>
 <td><code>"random"</code></td>
-<td>A random price within the bar's range — useful for fill-sensitivity analysis (seeded by <code>random_seed</code>)</td>
+<td>A random price within the bar's range, for fill-sensitivity analysis. Seeded by <code>Settings(random_seed=...)</code> for reproducibility.</td>
 </tr>
 </tbody>
 </table>
 <h2 id="entry-and-exit-windows">Entry and exit windows</h2>
-<p><code>entry_window</code> and <code>exit_window</code> allow multi-bar fill attempts. A value of <code>2</code> means the engine retries for up to 2 bars after the signal before skipping the trade.</p>
+<p><code>entry_window</code> and <code>exit_window</code> allow multi-bar fill attempts. A value of <code>2</code> means the engine retries for up to two bars after the signal before abandoning the trade. The default, <code>0</code>, fills on the target bar only.</p>
+<h2 id="see-also">See also</h2>
+<ul>
+<li><a href="../../how-to/set-stops/">Set stops and risk limits</a> — stop-losses, drawdown circuit-breakers, and re-entry rules.</li>
+<li><a href="../result-anatomy/">Result anatomy</a> — where the resulting fills and signals show up on a <code>Result</code>.</li>
+</ul>
 
 
 

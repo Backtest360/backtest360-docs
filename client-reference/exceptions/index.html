@@ -888,10 +888,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#common-error-codes" class="md-nav__link">
+  <a href="#fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common error codes
+        Fields
       
     </span>
   </a>
@@ -899,10 +899,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#input-validation-error-codes" class="md-nav__link">
+  <a href="#engine-error-codes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Input-validation error codes
+        Engine error codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#client-side-error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Client-side error codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategy-validation-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy validation errors
       
     </span>
   </a>
@@ -1252,10 +1274,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#common-error-codes" class="md-nav__link">
+  <a href="#fields" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Common error codes
+        Fields
       
     </span>
   </a>
@@ -1263,10 +1285,32 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#input-validation-error-codes" class="md-nav__link">
+  <a href="#engine-error-codes" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Input-validation error codes
+        Engine error codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#client-side-error-codes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Client-side error codes
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategy-validation-errors" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy validation errors
       
     </span>
   </a>
@@ -1291,6 +1335,8 @@
 
 
 <h1 id="exceptions">Exceptions</h1>
+<p>The Python client raises a single exception type for every failure: <code>Backtest360Error</code>.
+It carries structured fields so you can branch on the cause rather than parse messages.</p>
 
 
 <div class="doc doc-object doc-class">
@@ -1366,7 +1412,7 @@ raised before any request is sent, e.g. invalid inputs or missing config).</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Machine-readable error code (e.g. <code>SDK_NO_API_KEY</code>).</p>
+                <p>Machine-readable error code (e.g. <code>CLIENT_NO_API_KEY</code>).</p>
               </div>
             </td>
             <td>
@@ -1478,60 +1524,145 @@ try:
 
     </div>
 
-</div><h2 id="common-error-codes">Common error codes</h2>
+</div><h2 id="fields">Fields</h2>
 <table>
 <thead>
 <tr>
-<th>Code</th>
-<th>Status</th>
+<th>Field</th>
+<th>Type</th>
 <th>Meaning</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>AUTH_INVALID</code></td>
-<td>401</td>
-<td>API key not found or malformed</td>
+<td><code>status</code></td>
+<td><code>int</code></td>
+<td>HTTP status from the engine, or <code>0</code> for errors the client raises before a request is sent.</td>
 </tr>
 <tr>
-<td><code>AUTH_REVOKED</code></td>
+<td><code>code</code></td>
+<td><code>str \| None</code></td>
+<td>Stable machine-readable code (see the tables below).</td>
+</tr>
+<tr>
+<td><code>body</code></td>
+<td><code>dict \| str \| None</code></td>
+<td>The engine's response body, when present — useful for validation details.</td>
+</tr>
+<tr>
+<td><code>request_id</code></td>
+<td><code>str \| None</code></td>
+<td>Correlates the failure with an engine-side log entry.</td>
+</tr>
+<tr>
+<td><code>retry_after</code></td>
+<td><code>float \| None</code></td>
+<td>Seconds to wait before retrying, set on throttling responses.</td>
+</tr>
+</tbody>
+</table>
+<p>Branch on <code>code</code> for programmatic handling and fall back to <code>status</code> for coarse
+categories. See <a href="../../how-to/handle-errors/">Handle errors</a> for retry patterns.</p>
+<h2 id="engine-error-codes">Engine error codes</h2>
+<p>Returned by the engine with a non-zero HTTP <code>status</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Code</th>
+<th>Status</th>
+<th>When</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AUTH_MISSING</code></td>
 <td>401</td>
-<td>Key has been revoked</td>
+<td>No <code>X-API-Key</code> header was sent.</td>
+</tr>
+<tr>
+<td><code>AUTH_INVALID</code></td>
+<td>401</td>
+<td>The key is unknown or has been revoked.</td>
 </tr>
 <tr>
 <td><code>AUTH_EXPIRED</code></td>
 <td>401</td>
-<td>Key has passed its expiry date</td>
+<td>The key has passed its expiry date.</td>
 </tr>
 <tr>
-<td><code>RATE_LIMIT_EXCEEDED</code></td>
+<td><code>TENANT_SUSPENDED</code></td>
+<td>403</td>
+<td>The account is suspended.</td>
+</tr>
+<tr>
+<td><code>SCOPE_DENIED</code></td>
+<td>403</td>
+<td>The key lacks a scope the request requires.</td>
+</tr>
+<tr>
+<td><code>PLAN_UPGRADE_REQUIRED</code></td>
+<td>403</td>
+<td>A paid-only feature was requested on a free key.</td>
+</tr>
+<tr>
+<td><code>BAR_LIMIT_EXCEEDED</code></td>
+<td>413</td>
+<td>The request exceeds the key's bar cap.</td>
+</tr>
+<tr>
+<td><code>QUOTA_EXCEEDED</code></td>
 <td>429</td>
-<td>Per-minute or per-day limit hit</td>
+<td>A per-minute or per-day quota was hit. <code>retry_after</code> is set.</td>
 </tr>
 <tr>
-<td><code>CONCURRENCY_LIMIT</code></td>
+<td><code>CONCURRENCY_EXCEEDED</code></td>
 <td>429</td>
-<td>Per-key concurrency cap reached</td>
+<td>Too many requests are in flight for the key.</td>
 </tr>
 <tr>
-<td><code>VALIDATION_ERROR</code></td>
-<td>422</td>
-<td>Strategy or request payload invalid</td>
+<td><code>RATE_LIMITED</code></td>
+<td>429</td>
+<td>An upstream data provider throttled the request (distinct from quota).</td>
 </tr>
 <tr>
-<td><code>CLIENT_NO_API_KEY</code></td>
-<td>0</td>
-<td>No API key provided (client-side)</td>
+<td><code>INVALID_SYMBOL</code></td>
+<td>400</td>
+<td>The requested symbol is unknown.</td>
 </tr>
 <tr>
-<td><code>CLIENT_PATH_FORBIDDEN</code></td>
-<td>0</td>
-<td>Attempted to access a non-<code>/api/</code> path (client-side)</td>
+<td><code>INVALID_LEG_COUNT</code></td>
+<td>400</td>
+<td>The number of legs falls outside the supported 1–20 range.</td>
+</tr>
+<tr>
+<td><code>INVALID_PARAMETERS</code></td>
+<td>400 / 422</td>
+<td>A request parameter failed validation.</td>
+</tr>
+<tr>
+<td><code>DATA_ERROR</code></td>
+<td>400</td>
+<td>The data provider returned an error for the request.</td>
+</tr>
+<tr>
+<td><code>PROVIDER_UNAVAILABLE</code></td>
+<td>502</td>
+<td>A data provider is unavailable.</td>
+</tr>
+<tr>
+<td><code>ENGINE_BUSY</code></td>
+<td>503</td>
+<td>Compute capacity is exhausted.</td>
+</tr>
+<tr>
+<td><code>COMPUTE_TIMEOUT</code></td>
+<td>504</td>
+<td>The engine timed out while computing.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="input-validation-error-codes">Input-validation error codes</h2>
-<p>Raised by the client itself (status <code>0</code>) — either when the data or arguments you pass fail its pre-flight checks, or when the engine's response cannot be parsed:</p>
+<h2 id="client-side-error-codes">Client-side error codes</h2>
+<p>Raised by the client itself, before or after the request, always with <code>status</code> <code>0</code>.</p>
 <table>
 <thead>
 <tr>
@@ -1542,32 +1673,66 @@ try:
 </thead>
 <tbody>
 <tr>
-<td><code>CLIENT_MALFORMED_RESPONSE</code></td>
+<td><code>CLIENT_NO_API_KEY</code></td>
 <td>0</td>
-<td>The engine returned a response the client could not parse</td>
+<td>No API key was provided and none was found in the environment.</td>
+</tr>
+<tr>
+<td><code>CLIENT_PATH_FORBIDDEN</code></td>
+<td>0</td>
+<td>A request targeted a path outside <code>/api/</code>.</td>
+</tr>
+<tr>
+<td><code>CLIENT_TEMPLATE_NOT_FOUND</code></td>
+<td>0</td>
+<td>A named strategy template does not exist.</td>
 </tr>
 <tr>
 <td><code>CLIENT_INVALID_PAYLOAD</code></td>
 <td>0</td>
-<td>Request payload failed client-side validation</td>
+<td>A request payload failed client-side validation.</td>
 </tr>
 <tr>
 <td><code>CLIENT_INVALID_OHLCV</code></td>
 <td>0</td>
-<td>The supplied OHLCV DataFrame is missing columns, misindexed, or otherwise invalid</td>
+<td>The supplied OHLCV frame is missing columns, misindexed, or otherwise invalid.</td>
 </tr>
 <tr>
 <td><code>CLIENT_INVALID_SIGNALS</code></td>
 <td>0</td>
-<td>The supplied signal series is invalid</td>
+<td>The supplied signal series is invalid.</td>
 </tr>
 <tr>
 <td><code>CLIENT_INVALID_STRATEGY</code></td>
 <td>0</td>
-<td>The strategy object failed client-side validation</td>
+<td>The strategy object failed client-side validation.</td>
+</tr>
+<tr>
+<td><code>CLIENT_MALFORMED_RESPONSE</code></td>
+<td>0</td>
+<td>The engine returned a response the client could not parse.</td>
 </tr>
 </tbody>
 </table>
+<h2 id="strategy-validation-errors">Strategy validation errors</h2>
+<p>Strategy validation does not collapse to a single code. When a strategy document fails
+validation, the engine returns a structured report and the client surfaces it in
+<code>body</code>:</p>
+<pre><code class="language-json">{
+  &quot;valid&quot;: false,
+  &quot;errors&quot;: [
+    {
+      &quot;code&quot;: &quot;UNKNOWN_INDICATOR&quot;,
+      &quot;location&quot;: &quot;legs[0].strategy.rules[0]&quot;,
+      &quot;message&quot;: &quot;Indicator 'rsii' is not recognized.&quot;,
+      &quot;context&quot;: {&quot;indicator&quot;: &quot;rsii&quot;}
+    }
+  ]
+}
+</code></pre>
+<p>Each item names a specific problem — for example <code>UNKNOWN_INDICATOR</code>, <code>UNKNOWN_FIELD</code>,
+or <code>INVALID_INDICATOR_PARAMS</code> — with the <code>location</code> in the document that caused it. Use
+<code>validate_strategy()</code> to obtain this report without running a backtest.</p>
 
 
 

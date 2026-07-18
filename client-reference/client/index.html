@@ -821,6 +821,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#methods-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods at a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#backtest360.client.Client" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -844,10 +855,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#backtest360.client.Client.me" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        me
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#backtest360.client.Client.list_indicators" class="md-nav__link">
     <span class="md-ellipsis">
       
         list_indicators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backtest360.client.Client.list_templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_templates
       
     </span>
   </a>
@@ -964,6 +997,17 @@
     <span class="md-ellipsis">
       
         stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backtest360.client.Result.relative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        relative
       
     </span>
   </a>
@@ -1462,6 +1506,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#methods-at-a-glance" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methods at a glance
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#backtest360.client.Client" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1485,10 +1540,32 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#backtest360.client.Client.me" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        me
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#backtest360.client.Client.list_indicators" class="md-nav__link">
     <span class="md-ellipsis">
       
         list_indicators
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backtest360.client.Client.list_templates" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        list_templates
       
     </span>
   </a>
@@ -1605,6 +1682,17 @@
     <span class="md-ellipsis">
       
         stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#backtest360.client.Result.relative" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        relative
       
     </span>
   </a>
@@ -1733,6 +1821,72 @@
 
 
 <h1 id="client">Client</h1>
+<p><code>Client</code> is the entry point to the engine. Construct one with an API key — passed
+directly or read from the <code>BACKTEST360_API_KEY</code> environment variable — and call its
+methods to discover indicators, validate strategies, and run backtests.</p>
+<pre><code class="language-python">from backtest360 import Client
+
+client = Client()   # reads BACKTEST360_API_KEY and BACKTEST360_ENGINE_URL
+</code></pre>
+<p>The base URL defaults to <code>https://api.backtest360.com</code> and can be overridden with the
+<code>base_url</code> argument or the <code>BACKTEST360_ENGINE_URL</code> variable. See
+<a href="../../getting-started/authentication/">Authentication</a> to obtain a key.</p>
+<h2 id="methods-at-a-glance">Methods at a glance</h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>version()</code></td>
+<td>The engine version and contract.</td>
+</tr>
+<tr>
+<td><code>me()</code></td>
+<td>The calling key's identity, plan, and limits.</td>
+</tr>
+<tr>
+<td><code>list_indicators()</code></td>
+<td>The indicators the engine offers.</td>
+</tr>
+<tr>
+<td><code>list_templates(name=None, compact=True)</code></td>
+<td>The built-in strategy templates.</td>
+</tr>
+<tr>
+<td><code>sample_symbols()</code></td>
+<td>A short list of symbols with bundled sample data.</td>
+</tr>
+<tr>
+<td><code>sample_data(symbol="SPY")</code></td>
+<td>An OHLCV frame of sample data for quick experiments.</td>
+</tr>
+<tr>
+<td><code>validate_strategy(strategy)</code></td>
+<td>Validate a strategy document without running it.</td>
+</tr>
+<tr>
+<td><code>latest_signal(...)</code></td>
+<td>The most recent signal a strategy would produce.</td>
+</tr>
+<tr>
+<td><code>backtest(strategy, ohlcv, ...)</code></td>
+<td>Run a backtest from a <code>Strategy</code> and an OHLCV frame. Returns a <code>Result</code>.</td>
+</tr>
+<tr>
+<td><code>backtest_signals(signals, ohlcv, ...)</code></td>
+<td>Run a backtest from a precomputed signal series. Returns a <code>Result</code>.</td>
+</tr>
+<tr>
+<td><code>backtest_raw(payload)</code></td>
+<td>Run a backtest from a raw request envelope, for full control over the wire shape.</td>
+</tr>
+</tbody>
+</table>
+<p>The full signatures and argument detail follow.</p>
 
 
 <div class="doc doc-object doc-class">
@@ -1775,7 +1929,7 @@
               <div class="doc-md-description">
                 <p>Your Backtest360 API key. Falls back to the
 <code>BACKTEST360_API_KEY</code> environment variable. Raises
-<code>Backtest360Error(code="SDK_NO_API_KEY")</code> immediately if neither is set.</p>
+<code>Backtest360Error(code="CLIENT_NO_API_KEY")</code> immediately if neither is set.</p>
               </div>
             </td>
             <td>
@@ -1833,7 +1987,7 @@ df.columns = df.columns.str.lower()</p>
 <p>result = Client(api_key="b360_...").backtest(
 ...     Strategy.rsi_threshold_long(), df
 ... )
-print(result.stats["Sharpe"])
+print(result.stats["sharpe"])
 result.strategy_equity.plot(title="Equity curve")</p>
 </blockquote>
 </blockquote>
@@ -1943,7 +2097,7 @@ generated server-side when omitted.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>version the engine expects clients to declare. The SDK sends its own</p>
+                <p>version the engine expects clients to declare. The client sends its own</p>
               </div>
             </td>
           </tr>
@@ -2005,6 +2159,168 @@ print(info["version"])
 </blockquote>
 </blockquote>
 </blockquote>
+</details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="backtest360.client.Client.me" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">me</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Introspect the calling API key via <code>GET /api/me</code>.</p>
+<p>Returns the key's granted scopes, numeric limits, current usage against
+those limits, and capability flags — so you can discover what the key
+can do up front instead of learning it from 401/403/429 errors.
+Requires only a valid key; no particular scope.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>request_id</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional correlation id sent as the <code>X-Request-ID</code>
+header. See :meth:<code>version</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Dict with:</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li><code>scopes</code>: list of granted scope strings (sorted).</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li><code>limits</code>: per-key numeric limits — <code>rpm</code>, <code>rpd</code>,
+<code>max_concurrent</code>, <code>max_bars_per_run</code> (the last is <code>None</code>
+when the key has no bar cap).</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li><code>usage</code>: point-in-time usage including this request —
+<code>minute</code> / <code>day</code> (each <code>used</code> / <code>remaining</code> /
+<code>resets_in_seconds</code>) and <code>concurrent</code> (<code>used</code> / <code>remaining</code>).</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <ul>
+<li><code>capabilities</code>: boolean flags such as <code>server_side_fetch</code> and
+<code>full_metrics</code>.</li>
+</ul>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="backtest360.client.Backtest360Error" href="../exceptions/#backtest360.client.Backtest360Error">Backtest360Error</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>On any non-2xx response.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <pre><code class="language-pycon">&gt;&gt;&gt; info = client.me()
+&gt;&gt;&gt; print(info[&quot;scopes&quot;])
+['backtest.run', 'meta.read', 'strategy.validate']
+&gt;&gt;&gt; print(info[&quot;limits&quot;][&quot;rpm&quot;], info[&quot;usage&quot;][&quot;minute&quot;][&quot;remaining&quot;])
+</code></pre>
 </details>
 
     </div>
@@ -2114,6 +2430,176 @@ header. See :meth:<code>version</code>.</p>
 <blockquote>
 <p>for ind in client.list_indicators():
 ...     print(ind["name"], ind.get("params", {}).keys())</p>
+</blockquote>
+</blockquote>
+</blockquote>
+</details>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="backtest360.client.Client.list_templates" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">list_templates</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">compact</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Return the predesigned strategy templates from <code>GET /api/strategies</code>.</p>
+<p>The engine serves code-shipped, versioned strategy definitions. The
+response is tier-filtered server-side by the calling key's scopes:
+non-admin keys see only public templates. Each template is a
+ready-to-run strategy in the canonical shape a backtest accepts
+(<code>condition_tree</code> + <code>indicators</code>) plus parameter metadata
+(<code>requires</code> / <code>defaults</code> / <code>locked_params</code>) and an <code>origin</code> tag.</p>
+<p>With no arguments, returns a compact catalog — a list of dicts carrying
+only <code>id</code>, <code>origin</code>, <code>name</code>, and <code>description</code> — enough to browse
+and choose. Pass <code>compact=False</code> for the full definition of every
+template. Pass <code>name</code> (an <code>id</code> or <code>name</code>, matched
+case-insensitively) to return that single template's full entry as a
+dict; <code>compact</code> is ignored in that case.</p>
+
+
+<p><span class="doc-section-title">Parameters:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Default</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                <code>name</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional <code>id</code> or <code>name</code> of one template to fetch in full,
+matched case-insensitively. When given, the return value is a
+single template dict rather than a list.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>compact</code>
+            </td>
+            <td>
+                  <code><span title="bool">bool</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>When <code>True</code> (the default) and <code>name</code> is not given,
+each returned entry carries only the compact discovery fields.
+When <code>False</code>, each entry is the template's full definition.</p>
+              </div>
+            </td>
+            <td>
+                  <code>True</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                <code>request_id</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Optional correlation id sent as the <code>X-Request-ID</code>
+header. See :meth:<code>version</code>.</p>
+              </div>
+            </td>
+            <td>
+                  <code>None</code>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="list">list</span>[<span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]] | <span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>A list of template dicts, or — when <code>name</code> is given — the single</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="list">list</span>[<span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]] | <span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>matching template dict.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<p><span class="doc-section-title">Raises:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+            <td>
+                  <code><a class="autorefs autorefs-internal" title="backtest360.client.Backtest360Error" href="../exceptions/#backtest360.client.Backtest360Error">Backtest360Error</a></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>On any non-2xx response, or, when <code>name</code> is
+given and no template matches, with
+<code>code="CLIENT_TEMPLATE_NOT_FOUND"</code>.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+
+<details class="example" open>
+  <summary>Example</summary>
+  <blockquote>
+<blockquote>
+<blockquote>
+<p>for t in client.list_templates():
+...     print(t["id"], "-", t["description"])
+strat = client.list_templates(name="rsi_mean_reversion")
+result = client.backtest_raw({"strategy": strat, ...})</p>
 </blockquote>
 </blockquote>
 </blockquote>
@@ -2804,7 +3290,12 @@ print(sig["signal"])  # -1 / 0 / 1</p>
         <p>Send a raw <code>POST /api/backtest</code> payload, return the raw response dict.</p>
 <p>For users who want exact control over the wire format — build the JSON
 payload yourself with the API docs open. The payload is sent as-is,
-with no client-side validation.</p>
+with no client-side validation and no defaults applied. The engine's
+backtest request is the leg-based <code>{"run": {...}, "legs": [...]}</code>
+envelope: each leg needs an <code>id</code> and a <code>data_source</code>, <code>stats_keys</code>
+lives under <code>run</code> (set it to <code>"ids"</code> for stable metric-id keys), and
+a benchmark is its own <code>{"benchmark": true}</code> leg. See the metrics
+catalog on <code>GET /api/sections</code> for the id/label mapping.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2871,7 +3362,17 @@ header. See :meth:<code>version</code>.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The full response dict from the engine (<code>result</code> key and all).</p>
+                <p>The full response dict from the engine (<code>run</code> and <code>legs</code> keys</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>and all).</p>
               </div>
             </td>
           </tr>
@@ -2908,9 +3409,13 @@ header. See :meth:<code>version</code>.</p>
 <blockquote>
 <blockquote>
 <p>resp = client.backtest_raw({
-...     "strategy": {"condition_tree": {...}, "indicators": [...]},
-...     "data_source": {"ohlcv": {...}},
-...     "execution": {"signal_frequency": "daily"},
+...     "run": {"stats_keys": "ids"},
+...     "legs": [{
+...         "id": "strategy",
+...         "data_source": {"ohlcv": {...}},
+...         "strategy": {"condition_tree": {...}, "indicators": [...]},
+...         "execution": {"signal_frequency": "daily"},
+...     }],
 ... })</p>
 </blockquote>
 </blockquote>
@@ -2925,7 +3430,7 @@ header. See :meth:<code>version</code>.</p>
 
 
 <h3 id="backtest360.client.Client.backtest" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">backtest</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">ohlcv</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">execution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">costs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">risk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sizing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">market_hours</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">backtest</span><span class="p">(</span><span class="n">strategy</span><span class="p">,</span> <span class="n">ohlcv</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">execution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">costs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">risk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sizing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">market_hours</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stats_keys</span><span class="o">=</span><span class="s1">&#39;ids&#39;</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -2991,8 +3496,8 @@ header. See :meth:<code>version</code>.</p>
             <td>
               <div class="doc-md-description">
                 <p>Optional benchmark DataFrame (same shape as <code>ohlcv</code>).
-When provided, the engine adds Alpha, Beta, Information Ratio,
-Tracking Error, Up/Down Capture to <code>result.stats</code>.</p>
+When provided, benchmark-relative metrics (Alpha, Beta, Information Ratio,
+Tracking Error, Up/Down Capture, Capture Ratio) are surfaced on <code>result.relative</code>.</p>
               </div>
             </td>
             <td>
@@ -3119,6 +3624,26 @@ policy.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
+                <code>stats_keys</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>How the returned <code>result.stats</code> dict is keyed —
+<code>"ids"</code> (default) for stable snake_case metric ids (e.g.
+<code>"sharpe"</code>), or <code>"labels"</code> for legacy display-label keys
+(e.g. <code>"Sharpe"</code>). See the metrics catalog on
+<code>GET /api/sections</code> for the full id/label/description mapping.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;ids&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
                 <code>request_id</code>
             </td>
             <td>
@@ -3196,7 +3721,7 @@ result = Client(api_key="...").backtest(
 ...     costs=Costs(slippage_bps=2.5, fee_pct=0.001),
 ...     settings=Settings(risk_free_rate=0.04),
 ... )
-print(result.stats["Sharpe"])
+print(result.stats["sharpe"])
 result.strategy_equity.plot()</p>
 </blockquote>
 </blockquote>
@@ -3211,7 +3736,7 @@ result.strategy_equity.plot()</p>
 
 
 <h3 id="backtest360.client.Client.backtest_signals" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">backtest_signals</span><span class="p">(</span><span class="n">signals</span><span class="p">,</span> <span class="n">ohlcv</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">execution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">costs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">risk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sizing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">market_hours</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <code class="highlight language-python"><span class="n">backtest_signals</span><span class="p">(</span><span class="n">signals</span><span class="p">,</span> <span class="n">ohlcv</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">benchmark</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">execution</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">costs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">risk</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sizing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">market_hours</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">settings</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stats_keys</span><span class="o">=</span><span class="s1">&#39;ids&#39;</span><span class="p">,</span> <span class="n">request_id</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
 
 </h3>
 
@@ -3423,6 +3948,26 @@ Must cover the same date range as <code>ohlcv</code>.</p>
           </tr>
           <tr class="doc-section-item">
             <td>
+                <code>stats_keys</code>
+            </td>
+            <td>
+                  <code><span title="str">str</span></code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>How the returned <code>result.stats</code> dict is keyed —
+<code>"ids"</code> (default) for stable snake_case metric ids (e.g.
+<code>"sharpe"</code>), or <code>"labels"</code> for legacy display-label keys
+(e.g. <code>"Sharpe"</code>). See the metrics catalog on
+<code>GET /api/sections</code> for the full id/label/description mapping.</p>
+              </div>
+            </td>
+            <td>
+                  <code>&#39;ids&#39;</code>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td>
                 <code>request_id</code>
             </td>
             <td>
@@ -3496,7 +4041,7 @@ header. See :meth:<code>version</code>.</p>
 <p>import pandas as pd
 signals = pd.Series([0, 1, 1, 0, -1, 0], index=df.index)
 result = client.backtest_signals(signals, df)
-print(result.stats["Sharpe"])</p>
+print(result.stats["sharpe"])</p>
 </blockquote>
 </blockquote>
 </blockquote>
@@ -3514,6 +4059,9 @@ print(result.stats["Sharpe"])</p>
 
 </div><hr />
 <h2 id="result">Result</h2>
+<p>Every backtest returns a <code>Result</code>. Its <code>stats</code> dictionary is keyed by stable metric ids
+by default — <code>result.stats["sharpe"]</code>, <code>result.stats["max_drawdown"]</code> — and the rest of
+its attributes expose the equity curve, trades, and signals as pandas objects.</p>
 
 
 <div class="doc doc-object doc-class">
@@ -3556,7 +4104,28 @@ print(result.stats["Sharpe"])</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>The full statistic set, keyed by metric name.</p>
+                <p>The full statistic set. Keyed by stable snake_case metric id
+(e.g. <code>"sharpe"</code>) by default, or by legacy display label (e.g.
+<code>"Sharpe"</code>) when the request was made with
+<code>stats_keys="labels"</code>. See the metrics catalog on
+<code>GET /api/sections</code> for the full id/label/description mapping.</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+            <td><code><a class="autorefs autorefs-internal" title="relative
+
+  
+      property
+   (backtest360.client.Result.relative)" href="#backtest360.client.Result.relative">relative</a></code></td>
+            <td>
+                  <code><span title="dict">dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Benchmark-relative metrics (Alpha, Beta, Information Ratio,
+Tracking Error, Up/Down Capture, Capture Ratio), keyed the same way
+as <code>stats</code>. Empty dict when no benchmark was supplied.</p>
               </div>
             </td>
           </tr>
@@ -3742,6 +4311,39 @@ for trade in result.trades[:5]:
     <div class="doc doc-contents ">
 
         <p>Performance statistics dict (120+ metrics).</p>
+<p>Keyed by stable snake_case metric id by default (e.g. <code>"sharpe"</code>);
+see the <code>stats_keys</code> argument on the request method that produced
+this result and the metrics catalog on <code>GET /api/sections</code>.</p>
+<p>Benchmark-relative metrics (Alpha, Beta, Information Ratio, Tracking
+Error, Up/Down Capture, Capture Ratio) are NOT in this dict — see
+:attr:<code>relative</code>.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="backtest360.client.Result.relative" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">relative</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Benchmark-relative metrics (Alpha, Beta, Information Ratio, Tracking
+Error, Up/Down Capture, Capture Ratio), keyed the same way as <code>stats</code>
+(per the request's <code>stats_keys</code>). Empty dict when no benchmark was
+supplied.</p>
+<p>These metrics are NOT in <code>stats</code> — the engine returns them in a
+separate <code>relative</code> block, and the client surfaces them here.</p>
 
     </div>
 
@@ -3837,7 +4439,7 @@ optional — the engine omits it when no benchmark is configured.</p>
 
         <p>Net-of-cost log-return series indexed by datetime.</p>
 <p>Always present when <code>dates</code> is non-empty. A length mismatch raises
-<code>Backtest360Error</code> (<code>SDK_MALFORMED_RESPONSE</code>).</p>
+<code>Backtest360Error</code> (<code>CLIENT_MALFORMED_RESPONSE</code>).</p>
 
     </div>
 
@@ -3861,7 +4463,7 @@ optional — the engine omits it when no benchmark is configured.</p>
 
         <p>Signal series (<code>{-1, 0, 1}</code>) indexed by datetime.</p>
 <p>Always present when <code>dates</code> is non-empty. A length mismatch raises
-<code>Backtest360Error</code> (<code>SDK_MALFORMED_RESPONSE</code>).</p>
+<code>Backtest360Error</code> (<code>CLIENT_MALFORMED_RESPONSE</code>).</p>
 
     </div>
 
@@ -3959,8 +4561,12 @@ engine response carries no data-quality block.</p>
         <p>Print a high-level performance summary.</p>
 <p>Annualized Return, Annualized Std Dev, and Sharpe are read directly from
 the engine's <code>stats</code> dict (where they are already computed and annualized
-to the bar frequency used in the run). Total Return is derived from the
-equity curve as <code>last / first - 1</code>.</p>
+to the bar frequency used in the run). Each is read id-first with a
+display-label fallback — the stable metric ids (<code>cagr</code>, <code>vol_ann</code>,
+<code>sharpe</code>) when present, otherwise the legacy display labels (<code>CAGR</code>,
+<code>Vol (Ann)</code>, <code>Sharpe</code>) — so the summary renders correctly whether the
+stats are id-keyed or label-keyed. Total Return is derived from the equity
+curve as <code>last / first - 1</code>.</p>
 <p>Missing stats render as <code>n/a</code> — no exception is raised.</p>
 
 

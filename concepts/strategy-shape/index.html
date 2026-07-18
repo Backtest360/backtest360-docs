@@ -698,10 +698,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#crossover-via-transform-indicators" class="md-nav__link">
+  <a href="#crossovers-via-transform-indicators" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Crossover via transform indicators
+        Crossovers via transform indicators
       
     </span>
   </a>
@@ -731,10 +731,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#indicator-library" class="md-nav__link">
+  <a href="#browse-the-indicator-library" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Indicator library
+        Browse the indicator library
       
     </span>
   </a>
@@ -1296,10 +1296,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#crossover-via-transform-indicators" class="md-nav__link">
+  <a href="#crossovers-via-transform-indicators" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Crossover via transform indicators
+        Crossovers via transform indicators
       
     </span>
   </a>
@@ -1329,10 +1329,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#indicator-library" class="md-nav__link">
+  <a href="#browse-the-indicator-library" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Indicator library
+        Browse the indicator library
       
     </span>
   </a>
@@ -1357,11 +1357,12 @@
 
 
 <h1 id="strategy-shape">Strategy Shape</h1>
-<p>A strategy tells the engine <em>when</em> to enter and exit positions. It contains two parts:</p>
+<p>A strategy tells the engine <em>when</em> to enter and exit positions. A strategy document has two parts:</p>
 <ul>
-<li><strong>Condition expressions</strong> — boolean strings referencing indicator output columns</li>
-<li><strong>Indicator list</strong> — which indicators to compute, and with what parameters</li>
+<li><strong>Condition expressions</strong> — boolean strings that reference indicator output columns, for example <code>"rsi &lt; 30"</code>.</li>
+<li><strong>Indicator list</strong> — which indicators to compute, and with what parameters.</li>
 </ul>
+<p>The engine evaluates the expressions against the computed indicators on each bar to produce the signal series. How that signal becomes a fill is a separate concern — see <a href="../signal-vs-execution/">Signal vs execution</a>.</p>
 <h2 id="minimal-example">Minimal example</h2>
 <pre><code class="language-python">from backtest360 import Strategy
 
@@ -1372,9 +1373,9 @@ strat = Strategy(
     indicators=[Strategy.indicator(&quot;rsi&quot;, period=14)],
 )
 </code></pre>
-<p>The expression <code>"rsi &lt; 30"</code> references the <code>output</code> column of the <code>rsi</code> indicator (the default ref when only one RSI is declared).</p>
+<p>The expression <code>"rsi &lt; 30"</code> references the output column of the <code>rsi</code> indicator — <code>rsi</code> is the default column name when only one RSI is declared.</p>
 <h2 id="indicator-refs">Indicator refs</h2>
-<p>When you need the same indicator with different parameters, give each a unique <code>ref</code>:</p>
+<p>When you need the same indicator with different parameters, give each a unique <code>ref</code> and reference it by that name in your expressions:</p>
 <pre><code class="language-python">strat = Strategy(
     name=&quot;rsi_dual&quot;,
     long_entry=&quot;rsi_fast &lt; 20&quot;,
@@ -1385,8 +1386,8 @@ strat = Strategy(
     ],
 )
 </code></pre>
-<h2 id="crossover-via-transform-indicators">Crossover via transform indicators</h2>
-<p>Transform indicators take other indicators as input. <code>cross_above</code> fires when <code>upstream[0]</code> crosses above <code>upstream[1]</code>:</p>
+<h2 id="crossovers-via-transform-indicators">Crossovers via transform indicators</h2>
+<p>A transform indicator takes other indicators as input. <code>cross_above</code> fires when <code>upstream[0]</code> crosses above <code>upstream[1]</code>; <code>cross_below</code> is its mirror. Declare the two source indicators, then a transform that consumes them:</p>
 <pre><code class="language-python">strat = Strategy(
     name=&quot;sma_crossover&quot;,
     long_entry=&quot;x_above&quot;,
@@ -1406,7 +1407,7 @@ strat = Strategy(
 )
 </code></pre>
 <h2 id="short-selling">Short selling</h2>
-<p>Add <code>short_entry</code> and <code>short_exit</code> expressions:</p>
+<p>Add <code>short_entry</code> and <code>short_exit</code> expressions to trade both directions:</p>
 <pre><code class="language-python">strat = Strategy(
     name=&quot;rsi_long_short&quot;,
     long_entry=&quot;rsi &lt; 30&quot;,
@@ -1417,18 +1418,19 @@ strat = Strategy(
 )
 </code></pre>
 <h2 id="pre-built-templates">Pre-built templates</h2>
+<p>Each of these class methods returns a ready-to-run <code>Strategy</code>:</p>
 <pre><code class="language-python">Strategy.rsi_threshold_long()   # RSI(14) oversold entry / overbought exit
 Strategy.rsi_mean_reversion()   # RSI(14) recovery-zone entry / neutral exit
-Strategy.ma_crossover()         # SMA(10) × SMA(50) crossover
-Strategy.momentum_6m_long()     # ROC(126) &gt; 0
+Strategy.ma_crossover()         # SMA(10) x SMA(50) crossover
+Strategy.momentum_6m_long()     # 6-month momentum, long when positive
 </code></pre>
-<p>These <code>Strategy.*</code> class methods are the available pre-built templates — each returns a ready-to-run <code>Strategy</code>.</p>
-<h2 id="indicator-library">Indicator library</h2>
-<p>Browse available indicators and their parameter schemas:</p>
+<p>They are a good starting point and a template for your own strategies.</p>
+<h2 id="browse-the-indicator-library">Browse the indicator library</h2>
+<p><code>list_indicators()</code> returns every available indicator and its parameter schema:</p>
 <pre><code class="language-python">for ind in client.list_indicators():
     print(ind[&quot;name&quot;], ind.get(&quot;params&quot;, {}))
 </code></pre>
-<p>Or see the <a href="../../api-reference/">API Reference</a>.</p>
+<p>Validate a strategy against the registry before running it with <code>client.validate_strategy(strat)</code>; see <a href="../../getting-started/first-backtest/">Your first backtest</a>. The full indicator and metric catalogs are also in the <a href="../../api-reference/">API Reference</a>.</p>
 
 
 

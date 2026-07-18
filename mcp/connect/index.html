@@ -1416,6 +1416,33 @@ stdio — most desktop MCP clients support this through their JSON configuration
   }
 }
 </code></pre>
+<p><code>BACKTEST360_API_KEY</code> is the only required variable. The rest are optional:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Default</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BACKTEST360_ENGINE_URL</code></td>
+<td><code>https://api.backtest360.com</code></td>
+<td>The engine the server forwards to.</td>
+</tr>
+<tr>
+<td><code>BACKTEST360_MCP_TIMEOUT</code></td>
+<td><code>300</code></td>
+<td>Per-request timeout, in seconds.</td>
+</tr>
+<tr>
+<td><code>BACKTEST360_MCP_MAX_OUTPUT_BYTES</code></td>
+<td><code>100000</code></td>
+<td>Cap on the size of a tool response.</td>
+</tr>
+</tbody>
+</table>
 <p>The local server talks to the same engine; your key governs access either way.</p>
 <h2 id="authentication">Authentication</h2>
 <p>The MCP server uses the same <code>b360_</code> key as everything else. It never stores the key —
