@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Backtest360 API",
-    "version": "0.12.1"
+    "version": "0.16.1"
   },
   "paths": {
     "/api/version": {
@@ -822,7 +822,7 @@
         },
         "type": "object",
         "title": "BacktestRequest",
-        "description": "POST /api/backtest request -- the unified `{run, legs}` contract (U3).\nReplaces the pre-U3 scalar shape and the separate /api/backtest/compare\nendpoint: 1 leg is a plain backtest, 2+ legs is a comparison, and a\n`benchmark: true` leg or explicit `run.reference` produces per-leg\n`relative` metrics."
+        "description": "POST /api/backtest request -- the unified `{run, legs}` contract (U3).\nReplaces the pre-U3 scalar shape and the separate /api/backtest/compare\nendpoint: 1 leg is a plain backtest, 2+ legs is a comparison, and a\n`benchmark: true` leg or explicit `run.reference` produces per-leg\n`relative` metrics.\n\nUnknown top-level fields are rejected (422 `INVALID_PARAMETERS`) rather\nthan silently dropped (Pydantic's default `extra=\"ignore\"`). Before this,\na caller still POSTing the pre-U3 scalar shape --\n`{data_source, strategy, execution, benchmark}` -- got every field\ndiscarded and, for a `legs`-less body, an unhelpfully generic\n`400 INVALID_LEG_COUNT` instead of a clear signal that the request shape\nitself was wrong (2026-07-25 cross-repo audit). A caller who sent the\nold top-level `benchmark` field specifically gets a hint pointing at its replacement, the `benchmark: true` leg form."
       },
       "DataSourceRef": {
         "properties": {
