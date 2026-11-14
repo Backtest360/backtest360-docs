@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "Backtest360 API",
-    "version": "0.12.1"
+    "version": "0.19.1"
   },
   "paths": {
     "/api/version": {
@@ -822,7 +822,7 @@
         },
         "type": "object",
         "title": "BacktestRequest",
-        "description": "POST /api/backtest request -- the unified `{run, legs}` contract (U3).\nReplaces the pre-U3 scalar shape and the separate /api/backtest/compare\nendpoint: 1 leg is a plain backtest, 2+ legs is a comparison, and a\n`benchmark: true` leg or explicit `run.reference` produces per-leg\n`relative` metrics."
+        "description": "POST /api/backtest request -- the unified `{run, legs}` contract.\n\nOne leg runs a plain backtest; two or more legs run a comparison. A leg marked `benchmark: true`, or an explicit `run.reference`, adds per-leg `relative` metrics.\n\nUnknown top-level fields are rejected with 422 `INVALID_PARAMETERS`; a malformed request shape fails loudly rather than running with unintended defaults. Sending a top-level `benchmark` field returns a hint pointing to the `benchmark: true` leg form."
       },
       "DataSourceRef": {
         "properties": {
@@ -1029,6 +1029,34 @@
             "title": "Tp Atr Period",
             "default": 14
           },
+          "max_hold_bars": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 1.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Hold Bars"
+          },
+          "max_hold_action": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Hold Action"
+          },
+          "max_hold_cooldown_bars": {
+            "type": "integer",
+            "title": "Max Hold Cooldown Bars",
+            "default": 0
+          },
           "position_weight": {
             "type": "number",
             "title": "Position Weight",
@@ -1179,6 +1207,7 @@
               "stop_reentry": "immediate",
               "stop_cooldown_bars": 0,
               "tp_atr_period": 14,
+              "max_hold_cooldown_bars": 0,
               "position_weight": 1.0,
               "vol_target_lookback": 20,
               "signal_frequency": "daily",
@@ -1209,7 +1238,7 @@
           "data_source"
         ],
         "title": "LatestSignalRequest",
-        "description": "POST /api/latest-signal request -- inherently single-strategy (there\nis no P&L or cross-leg comparison to unify), so it keeps the pre-U3\nscalar shape rather than the {run, legs} contract used by /api/backtest."
+        "description": "POST /api/latest-signal request -- single-strategy by design: there\nis no P&L or cross-leg comparison to unify, so it takes a flat strategy\nshape rather than the `{run, legs}` contract used by /api/backtest."
       },
       "LegSpec": {
         "properties": {
@@ -1259,6 +1288,7 @@
               "stop_reentry": "immediate",
               "stop_cooldown_bars": 0,
               "tp_atr_period": 14,
+              "max_hold_cooldown_bars": 0,
               "position_weight": 1.0,
               "vol_target_lookback": 20,
               "signal_frequency": "daily",
@@ -1305,7 +1335,7 @@
           "data_source"
         ],
         "title": "LegSpec",
-        "description": "One leg of a /api/backtest run -- a plain strategy, a precomputed- signals leg, or a `benchmark: true` preset (a forced always-long, zero-cost, no-stops baseline). 1..20 legs per request; 1 leg = a plain backtest with identical semantics to the pre-U3 scalar shape.\n\nStructural / cross-leg validation (uniqueness, benchmark-forbidden fields, exposure bounds, reference resolution, period / signal_frequency agreement) happens in the endpoint handler so every violation gets its own 400 `code` -- see `_validate_and_prepare_legs`."
+        "description": "One leg of a /api/backtest run -- a plain strategy, a precomputed-signals leg, or a `benchmark: true` preset (a forced always-long, zero-cost, no-stops baseline). 1..20 legs per request; a single leg is an ordinary backtest.\n\nStructural and cross-leg validation -- uniqueness, fields forbidden on a benchmark leg, exposure bounds, reference resolution, and period / signal_frequency agreement -- is applied to the whole request, and each violation returns 400 with its own error `code`."
       },
       "OHLCVInput": {
         "properties": {
@@ -1704,6 +1734,18 @@
               }
             ],
             "title": "Requires"
+          },
+          "risk": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk"
           }
         },
         "type": "object",
